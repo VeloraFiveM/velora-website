@@ -1,3 +1,4 @@
+import TicketMessages from "../TicketMessages";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
@@ -451,7 +452,7 @@ function Conversation({
   }
   const ticket = detail.data;
   return (
-    <>
+    <section className="ticket-conversation">
       <div className="conversation-top">
         <button className="text-button" onClick={onBack}>
           <ArrowLeft size={16} /> All conversations
@@ -565,47 +566,11 @@ function Conversation({
                 )}
               </div>
             )}
-          <div className="conversation-messages" aria-label="Ticket messages">
-            {ticket.hasOlder && (
-              <p className="muted">
-                Showing the latest 100 messages. Download the transcript for the
-                complete conversation.
-              </p>
-            )}
-            {ticket.messages?.map((message) => (
-              <article
-                className={`message ${message.internal ? "private-note" : ""} ${message.author.discordId === session.user.discordId ? "own-message" : ""}`}
-                key={message.id}
-              >
-                <div className="message-meta">
-                  <strong>{message.author.username}</strong>
-                  {message.internal && (
-                    <span>
-                      <Lock size={12} /> Internal note
-                    </span>
-                  )}
-                  <span>
-                    {message.source === "discord" ? "Discord" : "Website"}
-                  </span>
-                  <time dateTime={message.createdAt}>
-                    {new Date(message.createdAt).toLocaleString()}
-                  </time>
-                </div>
-                <p>{message.body}</p>
-                {message.attachments.map((file) => (
-                  <a
-                    className="evidence-link"
-                    key={file.id}
-                    href={`${config.apiUrl}/v1/attachments/${file.id}`}
-                  >
-                    <Paperclip size={14} />
-                    {file.originalName}
-                    <small>{(file.size / 1024).toFixed(0)} KB</small>
-                  </a>
-                ))}
-              </article>
-            ))}
-          </div>
+          <TicketMessages
+            messages={ticket.messages ?? []}
+            currentDiscordId={session.user.discordId}
+            hasOlder={ticket.hasOlder}
+          />
           <ErrorNotice error={error} />
           {["CLOSED", "RESOLVED"].includes(ticket.status) ? (
             <div className="notice">
@@ -620,6 +585,10 @@ function Conversation({
               onSubmit={send}
               className={`reply-form ${internal ? "private-note" : ""}`}
             >
+              <div className="reply-composer-heading">
+                {internal ? <Lock size={16} /> : <MessageSquare size={16} />}{" "}
+                {internal ? "Private staff note" : "Reply to this conversation"}
+              </div>
               <label className="sr-only" htmlFor="ticket-reply">
                 {internal ? "Internal note" : "Your reply"}
               </label>
@@ -632,7 +601,7 @@ function Conversation({
                 placeholder={
                   internal
                     ? "Private note — never visible to the player."
-                    : "Write a reply to the team…"
+                    : "Write your reply…"
                 }
               />
               {files.length > 0 && (
@@ -697,11 +666,14 @@ function Conversation({
                   <Send size={15} />
                 </button>
               </div>
-              <small>PNG, JPEG, WebP or PDF · 5 MiB each · up to 5 files</small>
+              <small>
+                PNG, JPEG, WebP or PDF · 5 MiB each · up to 5 files ·{" "}
+                {body.length.toLocaleString()} / 12,000 characters
+              </small>
             </form>
           )}
         </>
       )}
-    </>
+    </section>
   );
 }

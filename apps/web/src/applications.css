@@ -1,0 +1,554 @@
+.applications-ui {
+  min-width: 0;
+}
+.applications-ui .portal-panel {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#10141f, #10141f) padding-box,
+    linear-gradient(120deg, #fe7cce70, #8896b522, #00ffff70) border-box;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 0 30px #00ffff07;
+  min-width: 0;
+}
+.applications-ui .portal-heading {
+  align-items: center;
+  gap: 20px;
+}
+.applications-ui .button {
+  border-radius: 8px;
+  gap: 9px;
+  white-space: normal;
+  font-size: 0.78rem;
+  padding: 12px 17px;
+}
+.applications-ui .page-heading {
+  margin-bottom: 35px;
+}
+.application-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+.application-opportunity {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 30px;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  background:
+    linear-gradient(140deg, #151823, #0e131e) padding-box,
+    linear-gradient(120deg, #fe7cce70, #00ffff55) border-box;
+  box-shadow:
+    -3px 0 25px #fe7cce09,
+    3px 0 25px #00ffff09;
+  min-width: 0;
+}
+.application-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fe7cce1f, #00ffff14);
+  color: #a2eff1;
+  border: 1px solid #ffffff12;
+}
+.application-opportunity h2 {
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.application-opportunity p {
+  font-size: 0.88rem;
+  color: #aeb6c9;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0;
+  flex: 1;
+}
+.application-opportunity .button {
+  margin-top: 8px;
+  min-width: 130px;
+}
+.application-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 9px;
+  border: 1px solid #ffffff1c;
+  border-radius: 6px;
+  font-size: 0.62rem;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  background: #ffffff05;
+  color: #b6c0d4;
+  white-space: normal;
+}
+.application-status.is-open,
+.application-status[data-status="ACCEPTED"] {
+  color: #9cebd4;
+  background: #62e5b810;
+  border-color: #62e5b840;
+}
+.application-status.is-closed,
+.application-status[data-status="REJECTED"],
+.application-status[data-status="WITHDRAWN"] {
+  color: #dba9bb;
+  background: #e990b010;
+  border-color: #e990b030;
+}
+.application-status[data-status="MORE_INFO"] {
+  color: #efcf8a;
+  background: #e9b65210;
+  border-color: #e9b65235;
+}
+.application-status[data-status="SUBMITTED"],
+.application-status[data-status="UNDER_REVIEW"] {
+  color: #9cebf1;
+  background: #00ffff0a;
+  border-color: #00ffff30;
+}
+.application-list-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 23px;
+  border-bottom: 1px solid #ffffff0d;
+  margin-bottom: 20px;
+}
+.application-list-heading h2 {
+  font-size: 1.2rem;
+  margin: 0 0 7px;
+  letter-spacing: -0.02em;
+}
+.application-list-heading p {
+  font-size: 0.73rem;
+  color: #8f9ab1;
+  margin: 0;
+}
+.application-list-heading > svg {
+  color: #a1e5ec;
+}
+.application-list-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.applications-ui .transcript-search,
+.application-status-filter {
+  display: grid;
+  gap: 8px;
+  font-size: 0.73rem;
+  color: #b5bed0;
+  min-width: 0;
+  margin: 0;
+}
+.application-list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  padding: 19px 16px;
+  margin: 9px 0;
+  border: 1px solid #ffffff0e;
+  border-radius: 11px;
+  background: #151b27;
+  text-align: left;
+  color: #edf0f7;
+  cursor: pointer;
+}
+.application-list-row:hover {
+  border-color: #00ffff4a;
+  background: #17212d;
+}
+.application-list-row > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+.application-list-row strong {
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+.application-list-row .eyebrow {
+  font-size: 0.6rem;
+}
+.application-list-row small {
+  font-size: 0.65rem;
+  color: #8c96ad;
+}
+.application-list-row > .application-status {
+  flex-shrink: 0;
+  max-width: 135px;
+}
+.application-empty {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding: 45px 20px;
+  gap: 13px;
+  color: #aeb8cb;
+}
+.application-empty svg {
+  color: #8ae3e8;
+}
+.application-empty h3 {
+  color: #eef1f8;
+  font-size: 1.1rem;
+  margin: 0;
+}
+.application-empty p {
+  font-size: 0.83rem;
+  line-height: 1.8;
+  max-width: 400px;
+  margin: 0;
+}
+.applications-ui .portal-form {
+  display: grid;
+  gap: 19px;
+  width: 100%;
+  max-width: none;
+  margin: 24px 0 0;
+  min-width: 0;
+}
+.applications-ui .portal-form > h2 {
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+  margin: 8px 0 0;
+}
+.applications-ui .portal-form > p {
+  font-size: 0.8rem;
+  color: #9da9be;
+  line-height: 1.8;
+  margin: 0;
+}
+.applications-ui label:not(.check-label) {
+  display: grid;
+  gap: 9px;
+  color: #ccd3e1;
+  font-size: 0.8rem;
+  min-width: 0;
+}
+.applications-ui input:not([type="checkbox"]):not([type="radio"]),
+.applications-ui textarea,
+.applications-ui select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid #ffffff1c;
+  border-radius: 8px;
+  background: #0a101a;
+  color: #eff2f8;
+  padding: 12px 14px;
+  font: inherit;
+  line-height: 1.5;
+  outline-offset: 3px;
+  color-scheme: dark;
+}
+.applications-ui input:focus,
+.applications-ui textarea:focus,
+.applications-ui select:focus {
+  border-color: #00ffff66;
+  box-shadow: 0 0 0 3px #00ffff09;
+}
+.applications-ui textarea {
+  min-height: 105px;
+  resize: vertical;
+}
+.applications-ui input[type="checkbox"],
+.applications-ui input[type="radio"] {
+  width: 16px !important;
+  height: 16px;
+  min-width: 16px;
+  accent-color: #8ce9eb;
+  margin: 0;
+  flex: 0 0 16px;
+}
+.applications-ui .check-label {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  font-size: 0.77rem;
+  line-height: 1.7;
+  color: #c6cede;
+  padding: 7px 0;
+}
+.applications-ui .form-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 20px;
+}
+.applications-ui .form-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0;
+}
+.applications-ui .form-actions small {
+  font-size: 0.66rem;
+  line-height: 1.7;
+}
+.applications-ui .application-question {
+  counter-increment: application-question;
+  margin: 0;
+  padding: 23px;
+  border: 1px solid #ffffff0d;
+  border-radius: 11px;
+  background: #ffffff02;
+  min-width: 0;
+}
+.applications-ui .application-question > label > span:first-child,
+.applications-ui .application-question > div > span:first-child {
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: #e3e8f2;
+}
+.applications-ui .application-question > label > span:first-child:before,
+.applications-ui .application-question > div > span:first-child:before {
+  content: counter(application-question, decimal-leading-zero) " / ";
+  font:
+    0.72rem ui-monospace,
+    monospace;
+  color: #85dce4;
+  margin-right: 5px;
+}
+.applications-ui .portal-form {
+  counter-reset: application-question;
+}
+.applications-ui .application-question small {
+  font-size: 0.72rem;
+  line-height: 1.8;
+  color: #9da8bc;
+}
+.applications-ui .answer-value {
+  margin: 6px 0 0;
+  background: #0a101a;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  min-height: 45px;
+}
+.applications-ui .answer-options {
+  display: grid;
+  gap: 5px;
+}
+.applications-ui .answer-options .check-label {
+  border: 1px solid #ffffff0c;
+  border-radius: 7px;
+  padding: 11px;
+  background: #0c121d;
+}
+.applications-ui .application-review-controls {
+  border: 1px solid #00ffff26;
+  border-radius: 12px;
+  padding: 24px;
+  background: #00ffff03;
+  gap: 15px;
+}
+.applications-ui .application-review-controls h3 {
+  font-size: 1.05rem;
+  margin: 0;
+}
+.applications-ui .application-review-controls > p {
+  font-size: 0.75rem;
+  color: #9ba9bd;
+  margin: 0;
+}
+.applications-ui .application-review-controls > .button {
+  justify-self: start;
+}
+.application-detail > h2 {
+  font-size: 1.65rem;
+  letter-spacing: -0.035em;
+  margin: 20px 0 12px !important;
+}
+.application-detail > p {
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: #a8b3c8;
+  white-space: pre-wrap;
+}
+.application-detail > .text-button {
+  display: block;
+  margin-bottom: 22px;
+}
+.application-detail .message {
+  max-width: 100%;
+  border-radius: 11px;
+  background: #151c29;
+  border-color: #ffffff13;
+}
+.application-detail .message.private-note {
+  background: #2b241c;
+  border-color: #d9b15b30;
+}
+.application-editor > .discord-section-heading {
+  border-bottom: 1px solid #ffffff0f;
+  padding-bottom: 18px;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.applications-ui .role-checklist {
+  border: 1px solid #ffffff14;
+  border-radius: 10px;
+  padding: 18px;
+  margin: 0;
+  min-width: 0;
+}
+.applications-ui .role-checklist legend {
+  font-size: 0.79rem;
+  color: #bedee8;
+  padding: 0 7px;
+}
+.applications-ui .role-checklist > p {
+  font-size: 0.71rem;
+  color: #9ca8bd;
+  line-height: 1.8;
+  margin: 0 0 10px;
+}
+.applications-ui .question-builder-card {
+  border: 1px solid #fe7cce25;
+  background: linear-gradient(130deg, #fe7cce03, #00ffff03);
+  border-radius: 12px;
+  margin: 0;
+  padding: 23px;
+  gap: 17px;
+  min-width: 0;
+}
+.applications-ui .question-builder-card .form-actions > strong {
+  font-size: 0.8rem;
+  color: #a0e7eb;
+  margin-right: auto;
+}
+.applications-ui .question-builder-card .form-actions .text-button {
+  font-size: 0.68rem;
+}
+.applications-ui .application-form-card {
+  border: 1px solid #ffffff12;
+  border-radius: 11px;
+  background: #141a26;
+  padding: 23px;
+  margin: 0 0 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  min-width: 0;
+}
+.applications-ui .application-form-card h2 {
+  font-size: 1.2rem;
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+.applications-ui .application-form-card p {
+  font-size: 0.82rem;
+  line-height: 1.8;
+  color: #9eabc0;
+  overflow-wrap: anywhere;
+}
+.applications-ui .application-form-card .form-actions {
+  border-top: 1px solid #ffffff0c;
+  padding-top: 14px;
+  margin: 0;
+}
+.applications-ui .discord-section-heading h3 {
+  font-size: 1.1rem;
+}
+.applications-ui .ticket-delete-controls {
+  padding-top: 22px;
+  margin-top: 25px;
+  border-top: 1px solid #ffffff12;
+  font-size: 0.75rem;
+}
+@media (max-width: 800px) {
+  .application-catalog-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .applications-ui .portal-panel {
+    padding: 21px;
+  }
+  .application-opportunity {
+    padding: 24px;
+  }
+  .application-list-tools {
+    grid-template-columns: minmax(0, 1fr) 150px;
+  }
+}
+@media (max-width: 550px) {
+  .applications-ui .portal-panel {
+    padding: 16px;
+    border-radius: 12px;
+  }
+  .applications-ui .portal-heading {
+    align-items: flex-start;
+  }
+  .applications-ui .form-columns,
+  .application-list-tools {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+  }
+  .applications-ui .application-question,
+  .applications-ui .question-builder-card {
+    padding: 16px;
+  }
+  .application-list-row {
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px 12px;
+  }
+  .application-list-row > .application-status {
+    max-width: 100px;
+    font-size: 0.55rem;
+  }
+  .applications-ui .form-actions .button {
+    flex: 1;
+    min-width: 110px;
+  }
+  .applications-ui .application-review-controls {
+    padding: 17px;
+  }
+  .applications-ui .role-checklist {
+    padding: 14px;
+  }
+  .application-opportunity h2 {
+    font-size: 1.3rem;
+  }
+  .applications-ui .button {
+    max-width: 100%;
+  }
+  .application-detail > h2 {
+    font-size: 1.4rem;
+  }
+  .applications-ui .portal-form {
+    gap: 17px;
+  }
+  .applications-ui .application-form-card {
+    padding: 17px;
+  }
+  .application-empty {
+    padding: 30px 10px;
+  }
+  .applications-ui input:not([type="checkbox"]):not([type="radio"]),
+  .applications-ui textarea,
+  .applications-ui select {
+    font-size: 16px;
+  }
+}

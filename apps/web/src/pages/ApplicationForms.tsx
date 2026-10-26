@@ -92,7 +92,7 @@ function Forms({ session }: { session: AuthSession }) {
     }
   }
   return (
-    <>
+    <div className="applications-ui">
       <div className="portal-heading">
         <div>
           <span className="eyebrow">APPLICATION MANAGEMENT</span>
@@ -217,7 +217,7 @@ function Forms({ session }: { session: AuthSession }) {
       <Link className="text-button" to="/staff">
         Staff workspace
       </Link>
-    </>
+    </div>
   );
 }
 function FormEditor({
@@ -302,7 +302,7 @@ function FormEditor({
     }
   }
   return (
-    <section className="portal-panel">
+    <section className="portal-panel application-editor">
       <div className="discord-section-heading">
         <button className="text-button" onClick={onBack}>
           ← All forms

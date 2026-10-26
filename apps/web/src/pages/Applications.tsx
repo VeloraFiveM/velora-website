@@ -1,3 +1,4 @@
+import { FileText, ArrowUpRight, Inbox } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -25,7 +26,7 @@ function Catalog() {
     queryFn: () => request<FormData[]>("/v1/public/application-forms"),
   });
   return (
-    <div className="page">
+    <div className="page applications-ui applications-catalog">
       <div className="page-heading">
         <span className="eyebrow">YOUR NEXT CHAPTER</span>
         <h1>Applications.</h1>
@@ -39,19 +40,28 @@ function Catalog() {
       </div>
       <ErrorNotice error={forms.error} />
       {forms.isPending && <p>Loading applications…</p>}
-      <div className="owner-grid">
+      <div className="application-catalog-grid">
         {forms.data?.map((form) => (
-          <article className="portal-panel" key={form.id}>
+          <article className="application-opportunity" key={form.id}>
+            <div className="application-card-icon">
+              <FileText size={24} />
+            </div>
             <span className="eyebrow">{form.category}</span>
             <h2>{form.title}</h2>
             <p>{form.description}</p>
-            <span className="tag">{form.accepting ? "Open" : "Closed"}</span>
+            <span
+              className={`application-status ${form.accepting ? "is-open" : "is-closed"}`}
+            >
+              {form.accepting
+                ? "Accepting applications"
+                : "Applications closed"}
+            </span>
             {form.accepting && (
               <Link
                 className="button primary"
                 to={`/my-applications?form=${form.id}`}
               >
-                Apply
+                Apply now <ArrowUpRight size={16} />
               </Link>
             )}
           </article>
@@ -59,6 +69,7 @@ function Catalog() {
       </div>
       {forms.data?.length === 0 && (
         <section className="portal-panel">
+          <Inbox size={30} />
           <h2>No applications published yet.</h2>
           <p>
             Available forms will appear here when community leadership publishes
@@ -81,7 +92,8 @@ function Workspace({
     formId = params.get("form"),
     [error, setError] = useState<unknown>(),
     [starting, setStarting] = useState(false),
-    [search, setSearch] = useState("");
+    [search, setSearch] = useState(""),
+    [statusFilter, setStatusFilter] = useState("ALL");
   const list = useQuery({
     queryKey: ["applications", review],
     queryFn: () =>
@@ -96,8 +108,15 @@ function Workspace({
     enabled: !!formId,
   });
   const chosen = forms.data?.find((f) => f.id === formId);
+  const visible = (list.data ?? []).filter(
+    (a) =>
+      (statusFilter === "ALL" || a.status === statusFilter) &&
+      `${a.number} ${a.version?.title ?? a.form.title} ${a.status.replaceAll("_", " ")} ${a.applicant?.username ?? ""}`
+        .toLowerCase()
+        .includes(search.toLowerCase()),
+  );
   return (
-    <>
+    <div className="applications-ui">
       <div className="portal-heading">
         <div>
           <span className="eyebrow">
@@ -124,7 +143,7 @@ function Workspace({
           onBack={() => setParams({})}
         />
       ) : formId ? (
-        <section className="portal-panel">
+        <section className="portal-panel application-list-panel">
           <h2>{chosen?.title ?? "Start application"}</h2>
           <p>{chosen?.description}</p>
           <button
@@ -155,48 +174,92 @@ function Workspace({
           </button>
         </section>
       ) : (
-        <section className="portal-panel">
-          <label className="transcript-search">
-            Search applications
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Application name, number or status"
-            />
-          </label>
-          {list.isPending && <p>Loading applications…</p>}
-          {list.data
-            ?.filter((a) =>
-              `${a.number} ${a.version?.title ?? a.form.title} ${a.status}`
-                .toLowerCase()
-                .includes(search.toLowerCase()),
-            )
-            .map((a) => (
-              <button
-                className="transcript-row"
-                key={a.id}
-                onClick={() => setParams({ application: a.id })}
+        <section className="portal-panel application-list-panel">
+          <div className="application-list-heading">
+            <div>
+              <h2>{review ? "Review queue" : "Your applications"}</h2>
+              <p>
+                {list.data?.length ?? 0} total ·{" "}
+                {list.data?.filter((a) => a.status === "DRAFT").length ?? 0}{" "}
+                drafts
+              </p>
+            </div>
+            <FileText size={24} />
+          </div>
+          <div className="application-list-tools">
+            <label className="transcript-search">
+              Search applications
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Application name, number or status"
+              />
+            </label>
+            <label className="application-status-filter">
+              <span>Status</span>
+              <select
+                aria-label="Filter application status"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <div>
-                  <span className="eyebrow">
-                    APP-{String(a.number).padStart(6, "0")}
-                  </span>
-                  <strong>{a.version?.title ?? a.form.title}</strong>
-                  <small>{new Date(a.updatedAt).toLocaleString()}</small>
-                </div>
-                <span className="tag">{a.status.replaceAll("_", " ")}</span>
-              </button>
-            ))}
-          {list.data?.length === 0 && (
-            <p>
-              {review
-                ? "No submitted applications are waiting for your roles."
-                : "You have no applications yet. Browse open forms to get started."}
-            </p>
+                {[
+                  "ALL",
+                  "DRAFT",
+                  "SUBMITTED",
+                  "UNDER_REVIEW",
+                  "MORE_INFO",
+                  "ACCEPTED",
+                  "REJECTED",
+                  "WITHDRAWN",
+                ].map((value) => (
+                  <option key={value} value={value}>
+                    {value === "ALL"
+                      ? "All statuses"
+                      : value.replaceAll("_", " ")}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          {list.isPending && <p>Loading applications…</p>}
+          {visible.map((a) => (
+            <button
+              className="application-list-row"
+              key={a.id}
+              onClick={() => setParams({ application: a.id })}
+            >
+              <div>
+                <span className="eyebrow">
+                  APP-{String(a.number).padStart(6, "0")}
+                </span>
+                <strong>{a.version?.title ?? a.form.title}</strong>
+                <small>{new Date(a.updatedAt).toLocaleString()}</small>
+              </div>
+              <span className="application-status" data-status={a.status}>
+                {a.status.replaceAll("_", " ")}
+              </span>
+            </button>
+          ))}
+          {!list.isPending && visible.length === 0 && (
+            <div className="application-empty">
+              <Inbox size={30} />
+              <h3>
+                {search || statusFilter !== "ALL"
+                  ? "No matching applications"
+                  : "Nothing here yet"}
+              </h3>
+              <p>
+                {search || statusFilter !== "ALL"
+                  ? "Try another search or status filter."
+                  : review
+                    ? "Applications available to your reviewer roles will appear here."
+                    : "Browse open forms to start your first application."}
+              </p>
+            </div>
           )}
         </section>
       )}
-    </>
+    </div>
   );
 }
 function ApplicationDetail({
@@ -353,7 +416,7 @@ function ApplicationDetail({
     );
   const isReviewer = review && data.canReview && data.status !== "DRAFT";
   return (
-    <section className="portal-panel">
+    <section className="portal-panel application-detail">
       <button className="text-button" onClick={onBack}>
         ← All applications
       </button>
@@ -365,7 +428,9 @@ function ApplicationDetail({
       <p>{data.version.description}</p>
       <p>
         {data.applicant?.username} ·{" "}
-        <strong>{data.status.replaceAll("_", " ")}</strong>
+        <strong className="application-status" data-status={data.status}>
+          {data.status.replaceAll("_", " ")}
+        </strong>
       </p>
       <ErrorNotice error={error ?? detail.error} />
       {success && (

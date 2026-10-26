@@ -22,6 +22,8 @@ import { config } from "./config";
 import "./styles.css";
 import "./redesign.css";
 import "./rules-browser.css";
+import "./ticket-chat.css";
+import "./applications.css";
 const Home = lazy(() => import("./pages/Home"));
 const Content = lazy(() => import("./pages/Content"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
