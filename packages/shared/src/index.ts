@@ -69,6 +69,7 @@ export const sessionSchema = z.object({
     discordId: z.string(),
     username: z.string(),
     avatar: z.string().nullable(),
+    discordUsername: z.string().nullable().optional(),
     createdAt: z.iso.datetime(),
   }),
   isOwner: z.boolean(),
@@ -224,7 +225,7 @@ export function canAccessCategory(
   );
 }
 export function ticketLabel(number: number) {
-  return `VEL-${String(number).padStart(6, "0")}`;
+  return `Ticket ${String(number).padStart(4, "0")}`;
 }
 
 export const applicationQuestionSchema = z
@@ -395,3 +396,5 @@ export function validateApplicationAnswers(
   }
   return null;
 }
+
+export * from "./rules";

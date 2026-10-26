@@ -9,9 +9,14 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
+import { api } from "./api";
 import { config } from "./config";
 import "./styles.css";
 import "./redesign.css";
@@ -36,7 +41,7 @@ const navigation = [
   ["/", "Home"],
   ["/rules", "Rules"],
   ["/applications", "Applications"],
-  ["/support", "Support"],
+  ["/support", "Portal"],
 ];
 function Splash() {
   const reduced = useReducedMotion();
@@ -85,6 +90,14 @@ function Splash() {
   );
 }
 function Layout() {
+  const session = useQuery({
+    queryKey: ["session"],
+    queryFn: api.session,
+    enabled: !!config.apiUrl,
+    retry: false,
+    refetchOnWindowFocus: true,
+    refetchInterval: 60000,
+  });
   const [menu, setMenu] = useState(false);
   const location = useLocation();
   const reduced = useReducedMotion();
@@ -142,9 +155,34 @@ function Layout() {
             </NavLink>
           ))}
         </nav>
-        <Link className="button nav-login" to="/dashboard">
-          Player portal <ArrowUpRight size={15} />
-        </Link>
+        {session.data ? (
+          <Link
+            className="button nav-login account-link"
+            to="/dashboard"
+            aria-label={`Open portal for ${session.data.user.discordUsername ?? session.data.user.username}`}
+          >
+            <img
+              src={
+                session.data.user.avatar
+                  ? `https://cdn.discordapp.com/avatars/${session.data.user.discordId}/${session.data.user.avatar}.webp?size=80`
+                  : `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(session.data.user.discordId) >> 22n) % 6n)}.png`
+              }
+              alt=""
+            />
+            <span>
+              {session.data.user.discordUsername ?? session.data.user.username}
+            </span>
+          </Link>
+        ) : (
+          <a
+            className="button nav-login"
+            href={
+              config.apiUrl ? `${config.apiUrl}/v1/auth/discord` : "#/dashboard"
+            }
+          >
+            Login with Discord <ArrowUpRight size={15} />
+          </a>
+        )}
       </header>
       <main
         id="main"
@@ -211,7 +249,7 @@ function Layout() {
           </Link>
           <div>
             <Link to="/rules">Community rules</Link>
-            <Link to="/support">Get support</Link>
+            <Link to="/support">Portal</Link>
             {config.discord && (
               <a href={config.discord} target="_blank" rel="noreferrer">
                 Discord ↗

@@ -1,3 +1,4 @@
+import RulesEditor from "./RulesEditor";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -32,7 +33,9 @@ export default function Owner() {
                   ? "Manage Staff."
                   : section === "roles"
                     ? "Role permissions."
-                    : "Your owner workspace."}
+                    : section === "rules"
+                      ? "Edit Rules."
+                      : "Your owner workspace."}
               </h1>
               <p>Owner access remains protected to your Discord account.</p>
             </div>
@@ -42,13 +45,20 @@ export default function Owner() {
               </Link>
             )}
           </div>
-          {section === "staff" ? (
+          {section === "rules" ? (
+            <RulesEditor session={session} />
+          ) : section === "staff" ? (
             <StaffNames session={session} />
           ) : section === "roles" ? (
             <RolePermissions session={session} />
           ) : (
             <div className="owner-grid">
               {[
+                [
+                  "/owner/rules",
+                  "Edit Rules",
+                  "Edit, organise and publish community rules.",
+                ],
                 [
                   "/owner/staff",
                   "Manage Staff",

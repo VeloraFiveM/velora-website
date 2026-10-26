@@ -2444,3 +2444,71 @@ footer small {
     padding: 16px;
   }
 }
+
+.account-link img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.account-link span {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rules-editor fieldset {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.rules-editor label {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+.rules-editor input,
+.rules-editor textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+.rules-editor-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.rules-editor-group {
+  margin: 24px 0;
+  padding: 20px;
+  border: 1px solid var(--border, #30303a);
+  border-radius: 12px;
+}
+.rules-editor-item {
+  margin: 20px 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border, #30303a);
+}
+.rule-body,
+.rule p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.rules-preview {
+  margin: 24px 0;
+}
+.rules-preview article {
+  margin: 20px 0;
+}
+@media (max-width: 600px) {
+  .account-link span {
+    max-width: 100px;
+  }
+  .nav-login {
+    font-size: 12px;
+  }
+  .rules-editor-group {
+    padding: 12px;
+  }
+}

@@ -1,3 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
+import { defaultRulesPage, type RulesPage } from "@velora/shared";
+import { request } from "../api";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -11,47 +14,6 @@ import {
 } from "lucide-react";
 import { CommunityActions, News, ServerStatus } from "../components";
 import { config } from "../config";
-const draftRules = [
-  {
-    category: "Community conduct",
-    items: [
-      [
-        "Respect the people behind the characters",
-        "Treat every player with respect. Harassment, discrimination, threats, and sharing personal information have no place in Velora.",
-      ],
-      [
-        "Keep the community fair",
-        "Do not exploit bugs, cheat, or use third-party tools to gain an unfair advantage. Report problems privately to staff.",
-      ],
-    ],
-  },
-  {
-    category: "Roleplay fundamentals",
-    items: [
-      [
-        "Let the story breathe",
-        "Give other players a fair opportunity to participate. Keep in-character conflict separate from out-of-character relationships.",
-      ],
-      [
-        "Play with what your character knows",
-        "Do not use information from streams, Discord, or other out-of-character sources to influence your character’s decisions.",
-      ],
-      [
-        "Value your character’s life",
-        "Respond to danger with believable care for your character and those around them.",
-      ],
-    ],
-  },
-  {
-    category: "Support and reports",
-    items: [
-      [
-        "Resolve issues through support",
-        "Keep disputes out of public channels. Provide clear context and available evidence when asking staff for help.",
-      ],
-    ],
-  },
-];
 function Heading({
   label,
   title,
@@ -72,7 +34,12 @@ function Heading({
 function Rules() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All categories");
-  const filtered = draftRules
+  const rules = useQuery({
+    queryKey: ["public-rules"],
+    queryFn: () => request<RulesPage>("/v1/public/rules"),
+  });
+  const page = rules.data ?? defaultRulesPage;
+  const filtered = page.groups
     .filter(
       (group) => category === "All categories" || group.category === category,
     )
@@ -87,16 +54,15 @@ function Rules() {
     <>
       <Heading
         label="THE SAME PAGE. A BETTER CITY."
-        title="Community rules."
-        text="A shared foundation for the stories we create together."
+        title={page.title}
+        text={page.description}
       />
-      <div className="notice">
-        <BookOpen size={19} />
-        <p>
-          Proposed community guidelines · These starter guidelines need owner
-          review before becoming official server rules.
-        </p>
-      </div>
+      {page.notice && (
+        <div className="notice">
+          <BookOpen size={19} />
+          <p>{page.notice}</p>
+        </div>
+      )}
       <div className="rule-tools">
         <label className="search">
           <Search size={18} />
@@ -116,11 +82,12 @@ function Rules() {
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
-          {["All categories", ...draftRules.map((group) => group.category)].map(
-            (value) => (
-              <option key={value}>{value}</option>
-            ),
-          )}
+          {[
+            "All categories",
+            ...page.groups.map((group) => group.category),
+          ].map((value) => (
+            <option key={value}>{value}</option>
+          ))}
         </select>
       </div>
       {filtered.length ? (
@@ -205,9 +172,9 @@ function Support() {
   return (
     <>
       <Heading
-        label="WE’RE HERE TO HELP"
-        title="A little help goes a long way."
-        text="Find the right place for your question, concern, or report."
+        label="YOUR PLACE IN VELORA"
+        title="Player Portal."
+        text="Access your characters, tickets and applications in one place."
       />
       <div className="feature-grid">
         {[
