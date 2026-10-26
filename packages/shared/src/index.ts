@@ -5,6 +5,8 @@ export const permissions = [
   "tickets.claim",
   "tickets.close",
   "tickets.manage",
+  "tickets.delete",
+  "transcripts.view",
   "tickets.sensitive",
   "notes.view",
   "applications.review",
@@ -161,6 +163,7 @@ export type TicketData = {
   messages?: TicketMessageData[];
   discord?: { channelId: string } | null;
   canStaff?: boolean;
+  deletedAt?: string | null;
 };
 export const characterInputSchema = z
   .object({

@@ -17,11 +17,13 @@ export function PortalGate({
   staff = false,
   admin = false,
   owner = false,
+  permission,
 }: {
   children: (session: AuthSession) => ReactNode;
   staff?: boolean;
   admin?: boolean;
   owner?: boolean;
+  permission?: string;
 }) {
   const session = useQuery({
     queryKey: ["session"],
@@ -78,7 +80,7 @@ export function PortalGate({
   const permitted =
     session.data.isOwner ||
     session.data.permissions.includes(
-      admin ? "tickets.manage" : "tickets.view",
+      permission ?? (admin ? "tickets.manage" : "tickets.view"),
     ) ||
     (admin && session.data.permissions.includes("roles.manage"));
   if ((owner && !session.data.isOwner) || ((staff || admin) && !permitted))
@@ -167,6 +169,12 @@ export function PortalFrame({
           {isManager && (
             <NavLink to="/admin">
               <Settings size={18} /> Management
+            </NavLink>
+          )}
+          {(session.isOwner ||
+            session.permissions.includes("transcripts.view")) && (
+            <NavLink to="/transcripts">
+              <MessageSquare size={18} /> Transcripts
             </NavLink>
           )}
           {session.isOwner && (

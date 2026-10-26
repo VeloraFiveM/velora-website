@@ -297,6 +297,7 @@ function Conversation({
       queryFn: () => api.ticket(id),
       refetchInterval: 15000,
     }),
+    [confirmDelete, setConfirmDelete] = useState(false),
     [body, setBody] = useState(""),
     [internal, setInternal] = useState(false),
     [busy, setBusy] = useState(false),
@@ -329,6 +330,25 @@ function Conversation({
     setError(undefined);
     key.current = crypto.randomUUID();
   }, [id]);
+  async function remove() {
+    setBusy(true);
+    setError(undefined);
+    try {
+      await request(
+        `/v1/tickets/${encodeURIComponent(id)}`,
+        "DELETE",
+        undefined,
+        session.csrfToken,
+      );
+      await client.invalidateQueries({ queryKey: ["tickets"] });
+      await client.invalidateQueries({ queryKey: ["transcripts"] });
+      onBack();
+    } catch (error) {
+      setError(error);
+    } finally {
+      setBusy(false);
+    }
+  }
   async function update(value: unknown) {
     setBusy(true);
     setError(undefined);
@@ -490,6 +510,41 @@ function Conversation({
               </label>
             </div>
           )}
+          {ticket.canStaff &&
+            (session.isOwner ||
+              session.permissions.includes("tickets.delete")) && (
+              <div className="ticket-delete-controls">
+                {confirmDelete ? (
+                  <div role="alert">
+                    <p>
+                      Delete this ticket from active queues? Its transcript and
+                      evidence will remain available to authorised management.
+                      The Discord channel will be archived.
+                    </p>
+                    <button
+                      className="button"
+                      disabled={busy}
+                      onClick={() => void remove()}
+                    >
+                      {busy ? "Deleting…" : "Confirm ticket deletion"}
+                    </button>
+                    <button
+                      className="text-button"
+                      onClick={() => setConfirmDelete(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="text-button"
+                    onClick={() => setConfirmDelete(true)}
+                  >
+                    Delete ticket and retain transcript
+                  </button>
+                )}
+              </div>
+            )}
           <div className="conversation-messages" aria-label="Ticket messages">
             {ticket.hasOlder && (
               <p className="muted">

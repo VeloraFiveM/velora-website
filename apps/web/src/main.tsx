@@ -18,6 +18,7 @@ const Home = lazy(() => import("./pages/Home"));
 const Content = lazy(() => import("./pages/Content"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Tickets = lazy(() => import("./pages/Tickets"));
+const Transcripts = lazy(() => import("./pages/Transcripts"));
 const DiscordManagement = lazy(() => import("./pages/DiscordManagement"));
 const Management = lazy(() => import("./pages/Management"));
 const queryClient = new QueryClient({
@@ -86,7 +87,7 @@ function Layout() {
   const reduced = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const portalRoute =
-    /^\/(dashboard|tickets|staff|admin|manage-discord)(\/|$)/.test(
+    /^\/(dashboard|tickets|staff|admin|manage-discord|transcripts)(\/|$)/.test(
       location.pathname,
     );
   useEffect(() => {
@@ -97,7 +98,7 @@ function Layout() {
   useEffect(() => {
     setMenu(false);
     window.scrollTo({ top: 0, behavior: "instant" });
-    document.title = `${navigation.find(([path]) => path === location.pathname)?.[1] ?? { "/dashboard": "Player portal", "/tickets": "My tickets", "/staff": "Staff desk", "/admin": "Management", "/manage-discord": "Manage Discord" }[location.pathname] ?? "Community"} · Velora`;
+    document.title = `${navigation.find(([path]) => path === location.pathname)?.[1] ?? { "/dashboard": "Player portal", "/tickets": "My tickets", "/staff": "Staff desk", "/admin": "Management", "/manage-discord": "Manage Discord", "/transcripts": "Transcripts" }[location.pathname] ?? "Community"} · Velora`;
     document.getElementById("main")?.focus({ preventScroll: true });
   }, [location.pathname]);
   return (
@@ -168,6 +169,7 @@ function Layout() {
                 <Route path="/tickets" element={<Tickets />} />
                 <Route path="/staff" element={<Tickets staff />} />
                 <Route path="/admin" element={<Management />} />
+                <Route path="/transcripts" element={<Transcripts />} />
                 <Route path="/manage-discord" element={<DiscordManagement />} />
                 <Route path="/:page" element={<Content />} />
                 <Route path="*" element={<Content />} />

@@ -2245,3 +2245,58 @@ footer small {
     align-items: flex-start;
   }
 }
+
+.portal-sidebar nav {
+  position: static;
+  inset: auto;
+  background: none;
+  border-bottom: 0;
+}
+.ticket-delete-controls {
+  border-top: 1px solid var(--line);
+  padding: 18px 0;
+}
+.ticket-delete-controls p {
+  margin-bottom: 15px;
+}
+.ticket-delete-controls button {
+  margin-right: 18px;
+}
+.transcript-search {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.transcript-search input {
+  background: #10121c;
+  color: #fff;
+  border: 1px solid #ffffff25;
+  border-radius: 5px;
+  padding: 13px;
+}
+.transcript-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  text-align: left;
+  padding: 22px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: none;
+  color: inherit;
+}
+.transcript-row:hover {
+  background: #ffffff04;
+}
+.transcript-row strong,
+.transcript-row small {
+  display: block;
+}
+.transcript-row strong {
+  margin: 8px 0;
+}
+.transcript-row small {
+  color: var(--muted);
+}

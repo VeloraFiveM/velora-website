@@ -78,6 +78,11 @@ export const api = {
       lastSyncAt: string | null;
       characters: CharacterData[];
     }>("/v1/me/characters"),
+  transcripts: () => request<TicketData[]>("/v1/staff/transcripts"),
+  transcript: (id: string) =>
+    request<TicketData & { hasOlder: boolean }>(
+      `/v1/staff/transcripts/${encodeURIComponent(id)}`,
+    ),
   roles: () =>
     request<(PlatformRole & { permissions: { permissionKey: string }[] })[]>(
       "/v1/admin/roles",
