@@ -84,6 +84,14 @@ export const api = {
     ),
   adminCategories: () =>
     request<TicketCategoryData[]>("/v1/admin/ticket-categories"),
+  discord: () =>
+    request<{
+      configured: boolean;
+      guildId: string | null;
+      botName?: string;
+      categories: { id: string; name: string }[];
+      roles: { id: string; name: string }[];
+    }>("/v1/admin/discord"),
   discordRoles: () =>
     request<{ configured: boolean; roles: { id: string; name: string }[] }>(
       "/v1/admin/discord/roles",

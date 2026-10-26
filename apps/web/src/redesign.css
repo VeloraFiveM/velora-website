@@ -2169,3 +2169,79 @@ footer small {
     transition: none;
   }
 }
+.discord-connection {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.discord-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.discord-section-heading p {
+  margin-top: 12px;
+}
+.discord-category-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+}
+.discord-category-row strong {
+  font-size: 1.1rem;
+}
+.discord-category-row p {
+  margin: 8px 0;
+}
+.discord-category-row small {
+  color: var(--muted);
+}
+.discord-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.discord-delete-confirm {
+  grid-column: 1/-1;
+  border: 1px solid #fe7cce55;
+  padding: 18px;
+  border-radius: 6px;
+}
+.discord-delete-confirm button {
+  margin: 10px 15px 0 0;
+}
+.discord-destination {
+  color: #ddd8e6;
+}
+.role-mapping-row select {
+  width: 100%;
+  max-width: 100%;
+  background: #10121c;
+  border: 1px solid #ffffff25;
+  border-radius: 5px;
+  padding: 12px;
+  color: #fff;
+}
+.discord-category-list + .muted {
+  margin-top: 20px;
+}
+@media (max-width: 800px) {
+  .discord-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .discord-category-row {
+    grid-template-columns: 1fr;
+  }
+  .discord-row-actions {
+    justify-content: flex-start;
+  }
+  .discord-connection {
+    align-items: flex-start;
+  }
+}

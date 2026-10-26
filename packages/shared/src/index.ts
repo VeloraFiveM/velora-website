@@ -130,6 +130,7 @@ export type TicketCategoryData = {
   enabled: boolean;
   sensitive: boolean;
   discordParentId: string | null;
+  _count?: { tickets: number };
   roles: { roleId: string }[];
 };
 export type PlatformRole = {

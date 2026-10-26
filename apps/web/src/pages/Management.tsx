@@ -245,12 +245,14 @@ function RoleMapping({
     </form>
   );
 }
-function CategoryEditor({
+export function CategoryEditor({
   category,
   roles,
   session,
   onBack,
+  discordCategories,
 }: {
+  discordCategories?: { id: string; name: string }[];
   category: TicketCategoryData | null;
   roles: PlatformRole[];
   session: AuthSession;
@@ -315,14 +317,33 @@ function CategoryEditor({
             />
           </label>
           <label>
-            Discord parent category ID
-            <input
-              inputMode="numeric"
-              pattern="[0-9]{17,20}"
-              value={parent}
-              onChange={(e) => setParent(e.target.value)}
-              placeholder="Optional until Discord sync is configured"
-            />
+            Discord ticket destination
+            {discordCategories ? (
+              <select
+                value={parent}
+                onChange={(e) => setParent(e.target.value)}
+              >
+                <option value="">Website only - no Discord destination</option>
+                {parent && !discordCategories.some((c) => c.id === parent) && (
+                  <option value={parent}>
+                    Unavailable category ({parent})
+                  </option>
+                )}
+                {discordCategories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                inputMode="numeric"
+                pattern="[0-9]{17,20}"
+                value={parent}
+                onChange={(e) => setParent(e.target.value)}
+                placeholder="Optional until Discord sync is configured"
+              />
+            )}
           </label>
         </div>
         <label>
