@@ -1,16 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { defaultRulesPage, type RulesPage } from "@velora/shared";
-import { request } from "../api";
-import { useState } from "react";
+import Rules from "./Rules";
 import { Link, useParams } from "react-router-dom";
 import {
-  Search,
   ArrowUpRight,
   ShieldCheck,
   LifeBuoy,
   MessageSquare,
-  BookOpen,
-  ChevronDown,
 } from "lucide-react";
 import { CommunityActions, News, ServerStatus } from "../components";
 import { config } from "../config";
@@ -29,86 +23,6 @@ function Heading({
       <h1>{title}</h1>
       <p>{text}</p>
     </div>
-  );
-}
-function Rules() {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All categories");
-  const rules = useQuery({
-    queryKey: ["public-rules"],
-    queryFn: () => request<RulesPage>("/v1/public/rules"),
-  });
-  const page = rules.data ?? defaultRulesPage;
-  const filtered = page.groups
-    .filter(
-      (group) => category === "All categories" || group.category === category,
-    )
-    .map((group) => ({
-      ...group,
-      items: group.items.filter((item) =>
-        item.join(" ").toLowerCase().includes(search.toLowerCase()),
-      ),
-    }))
-    .filter((group) => group.items.length);
-  return (
-    <>
-      <Heading
-        label="THE SAME PAGE. A BETTER CITY."
-        title={page.title}
-        text={page.description}
-      />
-      {page.notice && (
-        <div className="notice">
-          <BookOpen size={19} />
-          <p>{page.notice}</p>
-        </div>
-      )}
-      <div className="rule-tools">
-        <label className="search">
-          <Search size={18} />
-          <input
-            type="search"
-            aria-label="Search rules"
-            placeholder="Search the guidelines…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </label>
-        <label className="sr-only" htmlFor="category">
-          Rule category
-        </label>
-        <select
-          id="category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        >
-          {[
-            "All categories",
-            ...page.groups.map((group) => group.category),
-          ].map((value) => (
-            <option key={value}>{value}</option>
-          ))}
-        </select>
-      </div>
-      {filtered.length ? (
-        filtered.map((group) => (
-          <section className="rule-group" key={group.category}>
-            <h2>{group.category}</h2>
-            {group.items.map(([title, text]) => (
-              <details className="rule" key={title} open={!!search}>
-                <summary>
-                  {title}
-                  <ChevronDown size={17} />
-                </summary>
-                <p>{text}</p>
-              </details>
-            ))}
-          </section>
-        ))
-      ) : (
-        <p className="empty">No guidelines match your search.</p>
-      )}
-    </>
   );
 }
 function About() {
@@ -293,7 +207,7 @@ function Join() {
 export default function Content() {
   const { page } = useParams();
   return (
-    <div className="page">
+    <div className={page === "rules" ? "page rules-page" : "page"}>
       {page === "about" ? (
         <About />
       ) : page === "rules" ? (

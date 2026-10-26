@@ -1,3 +1,4 @@
+import AccountMenu from "./AccountMenu";
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -20,6 +21,7 @@ import { api } from "./api";
 import { config } from "./config";
 import "./styles.css";
 import "./redesign.css";
+import "./rules-browser.css";
 const Home = lazy(() => import("./pages/Home"));
 const Content = lazy(() => import("./pages/Content"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -156,23 +158,7 @@ function Layout() {
           ))}
         </nav>
         {session.data ? (
-          <Link
-            className="button nav-login account-link"
-            to="/dashboard"
-            aria-label={`Open portal for ${session.data.user.discordUsername ?? session.data.user.username}`}
-          >
-            <img
-              src={
-                session.data.user.avatar
-                  ? `https://cdn.discordapp.com/avatars/${session.data.user.discordId}/${session.data.user.avatar}.webp?size=80`
-                  : `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(session.data.user.discordId) >> 22n) % 6n)}.png`
-              }
-              alt=""
-            />
-            <span>
-              {session.data.user.discordUsername ?? session.data.user.username}
-            </span>
-          </Link>
+          <AccountMenu session={session.data} />
         ) : (
           <a
             className="button nav-login"
