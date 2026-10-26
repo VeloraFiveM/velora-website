@@ -2512,3 +2512,36 @@ footer small {
     padding: 12px;
   }
 }
+
+/* Shared public and portal header treatment. */
+header,
+header.is-scrolled,
+header.portal-header {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#0b0d16, #0b0d16) padding-box,
+    linear-gradient(110deg, #fe7cce, #b7b5ed 50%, #00ffff) border-box;
+  box-shadow:
+    -8px 0 26px #fe7cce28,
+    8px 0 26px #00ffff24,
+    0 12px 40px #00000030;
+}
+header .nav-login {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background:
+    linear-gradient(#10121d, #10121d) padding-box,
+    linear-gradient(110deg, #fe7cce, #00ffff) border-box;
+  box-shadow:
+    -3px 0 15px #fe7cce38,
+    3px 0 15px #00ffff32;
+}
+header .nav-login:hover,
+header .nav-login:focus-visible {
+  background:
+    linear-gradient(#1a1d2c, #1a1d2c) padding-box,
+    linear-gradient(110deg, #fe7cce, #00ffff) border-box;
+  box-shadow:
+    -4px 0 20px #fe7cce55,
+    4px 0 20px #00ffff48;
+}

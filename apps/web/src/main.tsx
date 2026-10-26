@@ -41,7 +41,7 @@ const navigation = [
   ["/", "Home"],
   ["/rules", "Rules"],
   ["/applications", "Applications"],
-  ["/support", "Portal"],
+  ["/dashboard", "Portal"],
 ];
 function Splash() {
   const reduced = useReducedMotion();
@@ -114,7 +114,7 @@ function Layout() {
   useEffect(() => {
     setMenu(false);
     window.scrollTo({ top: 0, behavior: "instant" });
-    document.title = `${navigation.find(([path]) => path === location.pathname)?.[1] ?? { "/dashboard": "Player portal", "/tickets": "My tickets", "/staff": "Staff", "/staff-tickets": "Staff tickets", "/my-applications": "My Applications", "/staff-applications": "Application review", "/application-forms": "Application forms", "/owner": "Owner", "/admin": "Management", "/manage-discord": "Manage Discord", "/transcripts": "Transcripts" }[location.pathname] ?? "Community"} · Velora`;
+    document.title = `${navigation.find(([path]) => path === location.pathname)?.[1] ?? { "/dashboard": "Portal", "/tickets": "My tickets", "/staff": "Staff", "/staff-tickets": "Staff tickets", "/my-applications": "My Applications", "/staff-applications": "Application review", "/application-forms": "Application forms", "/owner": "Owner", "/admin": "Management", "/manage-discord": "Manage Discord", "/transcripts": "Transcripts" }[location.pathname] ?? "Community"} · Velora`;
     document.getElementById("main")?.focus({ preventScroll: true });
   }, [location.pathname]);
   return (
@@ -207,6 +207,10 @@ function Layout() {
               <Routes location={location}>
                 <Route path="/" element={<Home />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route
+                  path="/support"
+                  element={<Navigate to="/dashboard" replace />}
+                />
                 <Route path="/tickets" element={<Tickets />} />
                 <Route path="/staff" element={<Staff />} />
                 <Route path="/staff-tickets" element={<Tickets staff />} />
@@ -249,7 +253,7 @@ function Layout() {
           </Link>
           <div>
             <Link to="/rules">Community rules</Link>
-            <Link to="/support">Portal</Link>
+            <Link to="/dashboard">Portal</Link>
             {config.discord && (
               <a href={config.discord} target="_blank" rel="noreferrer">
                 Discord ↗
