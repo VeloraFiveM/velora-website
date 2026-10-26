@@ -13,8 +13,12 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { config } from "./config";
 import "./styles.css";
+import "./redesign.css";
 const Home = lazy(() => import("./pages/Home"));
 const Content = lazy(() => import("./pages/Content"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Tickets = lazy(() => import("./pages/Tickets"));
+const Management = lazy(() => import("./pages/Management"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { retry: 1, staleTime: 30000, refetchOnWindowFocus: false },
@@ -63,8 +67,12 @@ function Splash() {
           transition={{ duration: reduced ? 0 : 0.25 }}
           aria-label="Welcome to Velora"
         >
-          <img src={logo} alt="Velora" />
-          <span>YOUR STORY STARTS HERE</span>
+          <div className="splash-emblem">
+            <img src={logo} alt="Velora" />
+            <i aria-hidden="true" />
+          </div>
+          <strong>VELORA</strong>
+          <span>YOUR CITY. YOUR STORY.</span>
           <div className="intro-line" />
         </motion.div>
       )}
@@ -75,10 +83,19 @@ function Layout() {
   const [menu, setMenu] = useState(false);
   const location = useLocation();
   const reduced = useReducedMotion();
+  const [scrolled, setScrolled] = useState(false);
+  const portalRoute = /^\/(dashboard|tickets|staff|admin)(\/|$)/.test(
+    location.pathname,
+  );
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   useEffect(() => {
     setMenu(false);
     window.scrollTo({ top: 0, behavior: "instant" });
-    document.title = `${navigation.find(([path]) => path === location.pathname)?.[1] ?? "Community"} · Velora`;
+    document.title = `${navigation.find(([path]) => path === location.pathname)?.[1] ?? { "/dashboard": "Player portal", "/tickets": "My tickets", "/staff": "Staff desk", "/admin": "Management" }[location.pathname] ?? "Community"} · Velora`;
     document.getElementById("main")?.focus({ preventScroll: true });
   }, [location.pathname]);
   return (
@@ -95,7 +112,9 @@ function Layout() {
         Skip to content
       </a>
       <Splash />
-      <header>
+      <header
+        className={`${scrolled ? "is-scrolled" : ""} ${portalRoute ? "portal-header" : ""}`}
+      >
         <Link to="/" className="brand" aria-label="Velora home">
           <img src={logo} alt="" />
           <span>
@@ -121,7 +140,11 @@ function Layout() {
           Player portal <ArrowUpRight size={15} />
         </Link>
       </header>
-      <main id="main" tabIndex={-1}>
+      <main
+        id="main"
+        tabIndex={-1}
+        className={portalRoute ? "portal-route" : ""}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -139,6 +162,10 @@ function Layout() {
             >
               <Routes location={location}>
                 <Route path="/" element={<Home />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/tickets" element={<Tickets />} />
+                <Route path="/staff" element={<Tickets staff />} />
+                <Route path="/admin" element={<Management />} />
                 <Route path="/:page" element={<Content />} />
                 <Route path="*" element={<Content />} />
               </Routes>
@@ -146,25 +173,27 @@ function Layout() {
           </motion.div>
         </AnimatePresence>
       </main>
-      <footer>
-        <Link className="footer-brand" to="/">
-          VELORA<span> A city. A community. Your story.</span>
-        </Link>
-        <div>
-          <Link to="/rules">Community rules</Link>
-          <Link to="/support">Get support</Link>
-          {config.discord && (
-            <a href={config.discord} target="_blank" rel="noreferrer">
-              Discord ↗
-            </a>
-          )}
-        </div>
-        <small>
-          © {new Date().getFullYear()} Velora. Independent FiveM community.
-          <br />
-          Not affiliated with Rockstar Games or Take-Two Interactive.
-        </small>
-      </footer>
+      {!portalRoute && (
+        <footer>
+          <Link className="footer-brand" to="/">
+            VELORA<span> A city. A community. Your story.</span>
+          </Link>
+          <div>
+            <Link to="/rules">Community rules</Link>
+            <Link to="/support">Get support</Link>
+            {config.discord && (
+              <a href={config.discord} target="_blank" rel="noreferrer">
+                Discord ↗
+              </a>
+            )}
+          </div>
+          <small>
+            © {new Date().getFullYear()} Velora. Independent FiveM community.
+            <br />
+            Not affiliated with Rockstar Games or Take-Two Interactive.
+          </small>
+        </footer>
+      )}
     </>
   );
 }

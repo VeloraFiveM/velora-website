@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from "motion/react";
 import { Link } from "react-router-dom";
 import {
   ArrowDown,
@@ -31,43 +32,34 @@ const features = [
   },
 ];
 export default function Home() {
+  const reduced = useReducedMotion();
   return (
     <>
-      <section className="hero">
-        <div className="hero-atmosphere" aria-hidden="true">
-          <div className="orb orb-one" />
-          <div className="orb orb-two" />
-          <div className="horizon" />
-          <div className="city-silhouette" />
-          <div className="grid-floor" />
-        </div>
-        <div className="hero-content">
-          <div className="hero-kicker">
-            <span /> YOUR NEXT CHAPTER IS WAITING
+      <section className="cinematic-hero">
+        <img
+          className="cinematic-backdrop"
+          src={`${import.meta.env.BASE_URL}assets/velora-city-night.webp`}
+          alt=""
+          aria-hidden="true"
+          fetchPriority="high"
+        />
+        <div className="cinematic-vignette" aria-hidden="true" />
+        <div className="cinematic-content">
+          <div className="cinematic-emblem">
+            <img
+              src={`${import.meta.env.BASE_URL}assets/velora-logo.png`}
+              alt="Velora V emblem"
+            />
           </div>
-          <h1>
-            A city of possibilities.
-            <br />
-            <span>A story that’s yours.</span>
-          </h1>
-          <p>
-            Welcome to Velora. More than a place to play.
-            <br />A place to belong, build, and become.
+          <span className="eyebrow">WELCOME TO YOUR NEXT CHAPTER</span>
+          <h1>VELORA</h1>
+          <p className="hero-tagline">YOUR CITY. YOUR STORY.</p>
+          <p className="hero-description">
+            Every street has a story. This one is yours to write.
           </p>
-          <CommunityActions />
-          <div className="hero-note">
-            FIVEM ROLEPLAY <span>✦</span> BUILT AROUND COMMUNITY
-          </div>
+          <CommunityActions cinematic />
         </div>
-        <div className="hero-art" aria-hidden="true">
-          <div className="art-ring" />
-          <img
-            src={`${import.meta.env.BASE_URL}assets/velora-logo.png`}
-            alt=""
-          />
-          <span className="art-caption">EST. FOR THE STORIES STILL UNTOLD</span>
-        </div>
-        <div className="hero-bottom">
+        <div className="cinematic-bottom">
           <ServerStatus />
           <a
             href="#discover"
@@ -77,8 +69,9 @@ export default function Home() {
               document.getElementById("discover")?.scrollIntoView();
             }}
           >
-            Discover Velora <ArrowDown size={15} />
+            EXPLORE THE CITY <ArrowDown size={16} />
           </a>
+          <span>FIVEM ROLEPLAY COMMUNITY</span>
         </div>
       </section>
       <section id="discover" className="section">
@@ -99,19 +92,43 @@ export default function Home() {
         </div>
         <div className="feature-grid">
           {features.map(({ icon: Icon, no, title, text }) => (
-            <article className="feature" key={no}>
+            <motion.article
+              className="feature"
+              key={no}
+              initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: reduced ? 0 : 0.55 }}
+            >
               <div className="feature-top">
                 <Icon size={25} />
                 <span>{no}</span>
               </div>
               <h3>{title}</h3>
               <p>{text}</p>
-            </article>
+            </motion.article>
           ))}
         </div>
         <Link to="/about" className="inline-link">
           Get to know Velora <ArrowUpRight size={17} />
         </Link>
+      </section>
+      <section className="city-interlude">
+        <img
+          src={`${import.meta.env.BASE_URL}assets/velora-city-night.webp`}
+          alt="A palm-lined city boulevard at night"
+          loading="lazy"
+        />
+        <div>
+          <span className="eyebrow">A WORLD THAT FEELS ALIVE</span>
+          <h2>
+            Not just a character.
+            <br />A life worth living.
+          </h2>
+          <Link className="inline-link" to="/about">
+            Step inside Velora <ArrowUpRight size={18} />
+          </Link>
+        </div>
       </section>
       <section className="path-section section">
         <div>
@@ -179,3 +196,4 @@ export default function Home() {
     </>
   );
 }
+

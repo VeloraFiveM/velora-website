@@ -1,4 +1,3 @@
-import Dashboard from "./Dashboard";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -155,8 +154,9 @@ function About() {
       />
       <div className="about-layout">
         <img
-          src={`${import.meta.env.BASE_URL}assets/velora-logo.png`}
-          alt="Velora neon city emblem"
+          src={`${import.meta.env.BASE_URL}assets/velora-city-night.webp`}
+          alt="A palm-lined boulevard overlooking the city at night"
+          loading="lazy"
         />
         <div>
           <h2>
@@ -262,11 +262,15 @@ function Support() {
       <div className="notice">
         <LifeBuoy size={22} />
         <div>
-          <h3>Website tickets are not available yet</h3>
+          <h3>Private support. A clear conversation.</h3>
           <p>
-            The secure ticket service is still being built. Please avoid sharing
-            sensitive evidence in public channels.
+            Sign in to open a ticket, send private evidence, and follow the
+            conversation with our team. Your ticket is only visible to you and
+            the staff authorised for its category.
           </p>
+          <Link className="button primary" to="/tickets">
+            Open your support portal <ArrowUpRight size={16} />
+          </Link>
           {config.discord ? (
             <a
               className="inline-link"
@@ -365,8 +369,6 @@ export default function Content() {
         <Applications />
       ) : page === "support" ? (
         <Support />
-      ) : page === "dashboard" ? (
-        <Dashboard />
       ) : page === "join" ? (
         <Join />
       ) : page === "staff" || page === "admin" ? (

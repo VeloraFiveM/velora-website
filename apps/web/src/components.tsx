@@ -3,16 +3,22 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight, Radio, RefreshCw } from "lucide-react";
 import { api } from "./api";
 import { config } from "./config";
-export function CommunityActions() {
+export function CommunityActions({
+  cinematic = false,
+}: {
+  cinematic?: boolean;
+}) {
   return (
     <div className="actions">
       {config.connect ? (
         <a className="button primary" href={config.connect}>
-          Enter the city <ArrowUpRight size={18} />
+          {cinematic ? "ENTER VELORA" : "Enter the city"}{" "}
+          <ArrowUpRight size={18} />
         </a>
       ) : (
         <Link className="button primary" to="/join">
-          Enter the city <ArrowUpRight size={18} />
+          {cinematic ? "ENTER VELORA" : "Enter the city"}{" "}
+          <ArrowUpRight size={18} />
         </Link>
       )}
       {config.discord ? (
@@ -22,7 +28,8 @@ export function CommunityActions() {
           target="_blank"
           rel="noreferrer"
         >
-          Join our Discord <ArrowUpRight size={18} />
+          {cinematic ? "JOIN DISCORD" : "Join our Discord"}{" "}
+          <ArrowUpRight size={18} />
         </a>
       ) : (
         <Link className="button" to="/join">
