@@ -1,0 +1,11 @@
+packages:
+  - apps/*
+  - packages/*
+overrides:
+  effect: ^3.20.0
+  "@prisma/config>deepmerge-ts": ^8.0.0
+allowBuilds:
+  esbuild: true
+  "@prisma/client": true
+  "@prisma/engines": true
+  prisma: true
