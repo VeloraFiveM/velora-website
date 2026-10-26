@@ -66,12 +66,26 @@ export const api = {
     request<Pick<TicketCategoryData, "id" | "name" | "description">[]>(
       "/v1/ticket-categories",
     ),
-  tickets: (staff = false) =>
-    request<TicketData[]>(staff ? "/v1/staff/tickets" : "/v1/tickets"),
+  tickets: (staff = false, claimed = false) =>
+    request<TicketData[]>(
+      staff
+        ? `/v1/staff/tickets${claimed ? "?claimed=me" : ""}`
+        : "/v1/tickets",
+    ),
   ticket: (id: string) =>
     request<TicketData & { hasOlder: boolean }>(
       `/v1/tickets/${encodeURIComponent(id)}`,
     ),
+  notifications: () =>
+    request<
+      {
+        id: string;
+        title: string;
+        body: string;
+        href: string | null;
+        createdAt: string;
+      }[]
+    >("/v1/me/notifications"),
   characters: () =>
     request<{
       configured: boolean;

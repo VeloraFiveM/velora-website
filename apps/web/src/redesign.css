@@ -2300,3 +2300,147 @@ footer small {
 .transcript-row small {
   color: var(--muted);
 }
+.portal-action-links,
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  margin: 18px 0 28px;
+}
+.owner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+.owner-grid .portal-panel {
+  margin: 0;
+}
+.owner-grid .portal-panel p {
+  margin-top: 15px;
+}
+.owner-grid .portal-panel .button {
+  margin-top: 20px;
+}
+.staff-name-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+}
+.staff-name-row small {
+  display: block;
+  color: var(--muted);
+}
+.staff-name-row input {
+  width: 100%;
+  padding: 12px;
+  color: #fff;
+  border: 1px solid #ffffff25;
+  background: #10121c;
+  border-radius: 5px;
+}
+.permission-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 24px 0;
+}
+.role-permission-card {
+  margin-bottom: 24px;
+}
+.application-question > label,
+.application-question > div {
+  display: grid;
+  gap: 10px;
+}
+.application-question {
+  margin: 20px 0;
+}
+.application-question small {
+  color: var(--muted);
+}
+.answer-value {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #ffffff04;
+  border: 1px solid var(--line);
+  padding: 16px;
+  border-radius: 5px;
+}
+.application-form-card {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+.application-form-card p {
+  margin: 12px 0;
+}
+.question-builder-card {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 24px;
+  margin: 15px 0;
+  background: #ffffff03;
+  display: grid;
+  gap: 16px;
+}
+.question-builder-card label {
+  display: grid;
+  gap: 8px;
+}
+.application-review-controls {
+  border-block: 1px solid var(--line);
+  padding: 24px 0;
+  margin: 30px 0;
+  display: grid;
+  gap: 16px;
+}
+.application-review-controls label {
+  display: grid;
+  gap: 10px;
+}
+.application-review-controls textarea {
+  background: #10121c;
+  border: 1px solid #ffffff25;
+  color: #fff;
+  padding: 12px;
+  min-height: 100px;
+}
+.application-history-heading {
+  margin: 30px 0 20px;
+}
+.portal-panel > p {
+  margin: 12px 0;
+}
+.portal-panel > h2 {
+  margin: 15px 0;
+}
+.portal-panel > span.eyebrow {
+  display: block;
+  margin-top: 16px;
+}
+.application-question input[type="file"] {
+  max-width: 100%;
+}
+.form-actions small {
+  color: var(--muted);
+}
+@media (max-width: 800px) {
+  .owner-grid,
+  .permission-grid,
+  .staff-name-row {
+    grid-template-columns: 1fr;
+  }
+  .staff-name-row {
+    gap: 12px;
+  }
+  .form-actions .button {
+    max-width: 100%;
+    white-space: normal;
+  }
+  .question-builder-card {
+    padding: 16px;
+  }
+}

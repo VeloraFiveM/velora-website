@@ -250,9 +250,7 @@ export function CategoryEditor({
   roles,
   session,
   onBack,
-  discordCategories,
 }: {
-  discordCategories?: { id: string; name: string }[];
   category: TicketCategoryData | null;
   roles: PlatformRole[];
   session: AuthSession;
@@ -262,7 +260,6 @@ export function CategoryEditor({
     [description, setDescription] = useState(category?.description ?? ""),
     [enabled, setEnabled] = useState(category?.enabled ?? true),
     [sensitive, setSensitive] = useState(category?.sensitive ?? false),
-    [parent, setParent] = useState(category?.discordParentId ?? ""),
     [selected, setSelected] = useState(
       category?.roles.map((r) => r.roleId) ?? [],
     ),
@@ -282,7 +279,7 @@ export function CategoryEditor({
           description,
           enabled,
           sensitive,
-          discordParentId: parent.trim() || null,
+          discordParentId: null,
           roleIds: selected,
         },
         session.csrfToken,
@@ -316,35 +313,6 @@ export function CategoryEditor({
               onChange={(e) => setName(e.target.value)}
             />
           </label>
-          <label>
-            Discord ticket destination
-            {discordCategories ? (
-              <select
-                value={parent}
-                onChange={(e) => setParent(e.target.value)}
-              >
-                <option value="">Website only - no Discord destination</option>
-                {parent && !discordCategories.some((c) => c.id === parent) && (
-                  <option value={parent}>
-                    Unavailable category ({parent})
-                  </option>
-                )}
-                {discordCategories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <input
-                inputMode="numeric"
-                pattern="[0-9]{17,20}"
-                value={parent}
-                onChange={(e) => setParent(e.target.value)}
-                placeholder="Optional until Discord sync is configured"
-              />
-            )}
-          </label>
         </div>
         <label>
           Description
@@ -361,8 +329,8 @@ export function CategoryEditor({
           <legend>Which staff roles can see these tickets?</legend>
           <p>
             Players see their own ticket only. Selected mapped roles receive
-            access on both the website and its private Discord ticket channel.
-            Founder always retains access.
+            access to tickets on the website and receive new-ticket alerts in
+            Discord. Founder always retains access.
           </p>
           {roles.map((role) => (
             <label className="check-label" key={role.id}>
@@ -408,8 +376,8 @@ export function CategoryEditor({
           Sensitive category
         </label>
         <p className="muted">
-          Changing access updates existing Discord ticket permissions before
-          saving. Discord administrators retain their built-in access.
+          All conversations stay on the website. Discord sends alerts with links
+          only.
         </p>
         <ErrorNotice error={error} />
         <button className="button primary" disabled={busy}>

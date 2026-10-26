@@ -75,8 +75,7 @@ export function DiscordSettings({ session }: { session: AuthSession }) {
           <span className="eyebrow">OWNER CONTROLS</span>
           <h1>Manage Discord.</h1>
           <p>
-            Connect ticket destinations and decide which staff roles can see
-            each conversation.
+            Manage website ticket categories, role access and Discord alerts.
           </p>
         </div>
         <button
@@ -103,19 +102,21 @@ export function DiscordSettings({ session }: { session: AuthSession }) {
           <p>
             {discord.data?.configured
               ? `${discord.data.botName} · Server ${discord.data.guildId}`
-              : "Category settings are saved on the website. Connect the bot to load Discord categories and roles."}
+              : "Category settings are saved on the website. Connect the bot to load Discord roles."}
           </p>
         </div>
       </section>
+      <p className="notice">
+        Tickets, replies and claims stay on the website. New-ticket alerts and
+        claimed-ticket reply pings go to the configured Discord tickets channel,
+        with direct links.
+      </p>
       {editing !== undefined ? (
         <CategoryEditor
           key={editing?.id ?? "new"}
           category={editing}
           roles={roles.data ?? []}
           session={session}
-          discordCategories={
-            discord.data?.configured ? discord.data.categories : undefined
-          }
           onBack={() => setEditing(undefined)}
         />
       ) : (
@@ -124,8 +125,8 @@ export function DiscordSettings({ session }: { session: AuthSession }) {
             <div>
               <h2>Ticket categories</h2>
               <p>
-                Create categories, choose their Discord destination, and set
-                their role access.
+                Create website ticket categories and choose which staff roles
+                can see them.
               </p>
             </div>
             <button
@@ -148,15 +149,7 @@ export function DiscordSettings({ session }: { session: AuthSession }) {
                     {category.enabled ? "Accepting tickets" : "Disabled"} ·{" "}
                     {category._count?.tickets ?? 0} tickets
                   </small>
-                  <p className="discord-destination">
-                    Discord:{" "}
-                    {category.discordParentId
-                      ? (discord.data?.categories.find(
-                          (c) => c.id === category.discordParentId,
-                        )?.name ??
-                        `Unavailable destination (${category.discordParentId})`)
-                      : "Website only"}
-                  </p>
+                  <p>Website conversations · Discord alerts only</p>
                   <small>
                     Access:{" "}
                     {[

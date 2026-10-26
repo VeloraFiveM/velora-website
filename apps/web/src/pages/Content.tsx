@@ -201,31 +201,6 @@ function About() {
     </>
   );
 }
-function Applications() {
-  return (
-    <>
-      <Heading
-        label="FIND YOUR NEXT CHAPTER"
-        title="Applications."
-        text="Take the next step in your Velora story."
-      />
-      <div className="empty">
-        <ShieldCheck size={32} />
-        <h2>Opportunities are on their way.</h2>
-        <p>
-          The application service is not connected yet. Published forms and
-          eligibility requirements will appear here once it is ready.
-        </p>
-        <Link className="button" to="/support">
-          Application questions <ArrowUpRight size={17} />
-        </Link>
-      </div>
-      <p className="muted">
-        No applications are being accepted through this page yet.
-      </p>
-    </>
-  );
-}
 function Support() {
   return (
     <>
@@ -365,8 +340,6 @@ export default function Content() {
           />
           <News full />
         </>
-      ) : page === "applications" ? (
-        <Applications />
       ) : page === "support" ? (
         <Support />
       ) : page === "join" ? (

@@ -7,6 +7,7 @@ import {
   Route,
   Routes,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -18,6 +19,10 @@ const Home = lazy(() => import("./pages/Home"));
 const Content = lazy(() => import("./pages/Content"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Tickets = lazy(() => import("./pages/Tickets"));
+const Owner = lazy(() => import("./pages/Owner"));
+const ApplicationPages = lazy(() => import("./pages/Applications"));
+const ApplicationForms = lazy(() => import("./pages/ApplicationForms"));
+const Staff = lazy(() => import("./pages/Staff"));
 const Transcripts = lazy(() => import("./pages/Transcripts"));
 const DiscordManagement = lazy(() => import("./pages/DiscordManagement"));
 const Management = lazy(() => import("./pages/Management"));
@@ -29,9 +34,7 @@ const queryClient = new QueryClient({
 const logo = `${import.meta.env.BASE_URL}assets/velora-logo.png`;
 const navigation = [
   ["/", "Home"],
-  ["/about", "The city"],
   ["/rules", "Rules"],
-  ["/announcements", "News"],
   ["/applications", "Applications"],
   ["/support", "Support"],
 ];
@@ -87,7 +90,7 @@ function Layout() {
   const reduced = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const portalRoute =
-    /^\/(dashboard|tickets|staff|admin|manage-discord|transcripts)(\/|$)/.test(
+    /^\/(dashboard|tickets|staff|admin|manage-discord|transcripts|owner|my-applications|staff-tickets|staff-applications|application-forms)(\/|$)/.test(
       location.pathname,
     );
   useEffect(() => {
@@ -98,7 +101,7 @@ function Layout() {
   useEffect(() => {
     setMenu(false);
     window.scrollTo({ top: 0, behavior: "instant" });
-    document.title = `${navigation.find(([path]) => path === location.pathname)?.[1] ?? { "/dashboard": "Player portal", "/tickets": "My tickets", "/staff": "Staff desk", "/admin": "Management", "/manage-discord": "Manage Discord", "/transcripts": "Transcripts" }[location.pathname] ?? "Community"} · Velora`;
+    document.title = `${navigation.find(([path]) => path === location.pathname)?.[1] ?? { "/dashboard": "Player portal", "/tickets": "My tickets", "/staff": "Staff", "/staff-tickets": "Staff tickets", "/my-applications": "My Applications", "/staff-applications": "Application review", "/application-forms": "Application forms", "/owner": "Owner", "/admin": "Management", "/manage-discord": "Manage Discord", "/transcripts": "Transcripts" }[location.pathname] ?? "Community"} · Velora`;
     document.getElementById("main")?.focus({ preventScroll: true });
   }, [location.pathname]);
   return (
@@ -167,7 +170,30 @@ function Layout() {
                 <Route path="/" element={<Home />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/tickets" element={<Tickets />} />
-                <Route path="/staff" element={<Tickets staff />} />
+                <Route path="/staff" element={<Staff />} />
+                <Route path="/staff-tickets" element={<Tickets staff />} />
+                <Route path="/owner/:section?" element={<Owner />} />
+                <Route
+                  path="/applications"
+                  element={<ApplicationPages mode="catalog" />}
+                />
+                <Route
+                  path="/my-applications"
+                  element={<ApplicationPages mode="mine" />}
+                />
+                <Route
+                  path="/staff-applications"
+                  element={<ApplicationPages mode="review" />}
+                />
+                <Route
+                  path="/application-forms"
+                  element={<ApplicationForms />}
+                />
+                <Route path="/about" element={<Navigate to="/" replace />} />
+                <Route
+                  path="/announcements"
+                  element={<Navigate to="/" replace />}
+                />
                 <Route path="/admin" element={<Management />} />
                 <Route path="/transcripts" element={<Transcripts />} />
                 <Route path="/manage-discord" element={<DiscordManagement />} />

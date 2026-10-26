@@ -18,12 +18,14 @@ export function PortalGate({
   admin = false,
   owner = false,
   permission,
+  anyPermissions,
 }: {
   children: (session: AuthSession) => ReactNode;
   staff?: boolean;
   admin?: boolean;
   owner?: boolean;
   permission?: string;
+  anyPermissions?: string[];
 }) {
   const session = useQuery({
     queryKey: ["session"],
@@ -79,9 +81,11 @@ export function PortalGate({
   }
   const permitted =
     session.data.isOwner ||
-    session.data.permissions.includes(
-      permission ?? (admin ? "tickets.manage" : "tickets.view"),
-    ) ||
+    (anyPermissions
+      ? anyPermissions.some((p) => session.data!.permissions.includes(p))
+      : session.data.permissions.includes(
+          permission ?? (admin ? "tickets.manage" : "tickets.view"),
+        )) ||
     (admin && session.data.permissions.includes("roles.manage"));
   if ((owner && !session.data.isOwner) || ((staff || admin) && !permitted))
     return (
@@ -121,12 +125,7 @@ export function PortalFrame({
       setBusy(false);
     }
   }
-  const isStaff =
-      session.isOwner || session.permissions.includes("tickets.view"),
-    isManager =
-      session.isOwner ||
-      session.permissions.includes("tickets.manage") ||
-      session.permissions.includes("roles.manage");
+  const isStaff = session.isOwner || session.permissions.length > 0;
   return (
     <div className="portal-shell">
       <aside className="portal-sidebar">
@@ -161,14 +160,12 @@ export function PortalFrame({
           <NavLink to="/tickets">
             <MessageSquare size={18} /> My tickets
           </NavLink>
+          <NavLink to="/my-applications">
+            <MessageSquare size={18} /> My Applications
+          </NavLink>
           {isStaff && (
             <NavLink to="/staff">
-              <Shield size={18} /> Staff desk
-            </NavLink>
-          )}
-          {isManager && (
-            <NavLink to="/admin">
-              <Settings size={18} /> Management
+              <Shield size={18} /> Staff
             </NavLink>
           )}
           {(session.isOwner ||
@@ -178,8 +175,8 @@ export function PortalFrame({
             </NavLink>
           )}
           {session.isOwner && (
-            <NavLink to="/manage-discord">
-              <Settings size={18} /> Manage Discord
+            <NavLink to="/owner">
+              <Settings size={18} /> Owner
             </NavLink>
           )}
         </nav>

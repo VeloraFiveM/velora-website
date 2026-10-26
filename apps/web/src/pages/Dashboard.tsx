@@ -22,6 +22,11 @@ export default function Dashboard() {
   return <PortalGate>{(session) => <Overview session={session} />}</PortalGate>;
 }
 function Overview({ session }: { session: AuthSession }) {
+  const notifications = useQuery({
+    queryKey: ["notifications"],
+    queryFn: api.notifications,
+    refetchInterval: 15000,
+  });
   const characters = useQuery({
       queryKey: ["characters"],
       queryFn: api.characters,
@@ -49,6 +54,42 @@ function Overview({ session }: { session: AuthSession }) {
           Contact the team <ArrowUpRight size={16} />
         </Link>
       </div>
+      <div className="portal-action-links">
+        <Link className="button" to="/my-applications">
+          My Applications
+        </Link>
+        <Link className="button" to="/tickets">
+          My Tickets
+        </Link>
+        {(session.isOwner || session.permissions.length > 0) && (
+          <Link className="button" to="/staff">
+            Staff
+          </Link>
+        )}
+        {session.isOwner && (
+          <Link className="button primary" to="/owner">
+            Owner
+          </Link>
+        )}
+      </div>
+      <section className="portal-panel">
+        <h2>Notifications</h2>
+        <ErrorNotice error={notifications.error} />
+        {notifications.data?.slice(0, 5).map((n) => (
+          <a
+            className="transcript-row"
+            key={n.id}
+            href={n.href ?? "/#/tickets"}
+          >
+            <div>
+              <strong>{n.title}</strong>
+              <p>{n.body}</p>
+              <small>{new Date(n.createdAt).toLocaleString()}</small>
+            </div>
+          </a>
+        ))}
+        {notifications.data?.length === 0 && <p>No new notifications.</p>}
+      </section>
       <section className="character-overview">
         <div className="character-overview-heading">
           <div>

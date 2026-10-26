@@ -10,7 +10,7 @@ import {
   Waypoints,
   BriefcaseBusiness,
 } from "lucide-react";
-import { CommunityActions, News, ServerStatus } from "../components";
+import { CommunityActions, ServerStatus } from "../components";
 const features = [
   {
     icon: Building2,
@@ -109,7 +109,7 @@ export default function Home() {
             </motion.article>
           ))}
         </div>
-        <Link to="/about" className="inline-link">
+        <Link to="/join" className="inline-link">
           Get to know Velora <ArrowUpRight size={17} />
         </Link>
       </section>
@@ -125,7 +125,7 @@ export default function Home() {
             Not just a character.
             <br />A life worth living.
           </h2>
-          <Link className="inline-link" to="/about">
+          <Link className="inline-link" to="/join">
             Step inside Velora <ArrowUpRight size={18} />
           </Link>
         </div>
@@ -145,7 +145,7 @@ export default function Home() {
           </p>
         </div>
         <div className="paths">
-          <Link to="/about">
+          <Link to="/join">
             <BriefcaseBusiness />
             <div>
               <h3>Build your future</h3>
@@ -171,20 +171,7 @@ export default function Home() {
           </Link>
         </div>
       </section>
-      <section className="section news-section">
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">FROM THE COMMUNITY</span>
-            <h2>
-              The latest in <span>Velora.</span>
-            </h2>
-          </div>
-          <Link className="inline-link" to="/announcements">
-            All announcements <ArrowUpRight size={17} />
-          </Link>
-        </div>
-        <News />
-      </section>
+
       <section className="join-banner">
         <span className="eyebrow">EVERY STORY STARTS SOMEWHERE</span>
         <h2>
@@ -196,4 +183,3 @@ export default function Home() {
     </>
   );
 }
-

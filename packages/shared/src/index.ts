@@ -10,6 +10,8 @@ export const permissions = [
   "tickets.sensitive",
   "notes.view",
   "applications.review",
+  "applications.manage",
+  "applications.openclose",
   "applications.accept",
   "applications.reject",
   "content.manage",
@@ -223,4 +225,173 @@ export function canAccessCategory(
 }
 export function ticketLabel(number: number) {
   return `VEL-${String(number).padStart(6, "0")}`;
+}
+
+export const applicationQuestionSchema = z
+  .object({
+    id: z.string().regex(/^[a-zA-Z0-9_-]{1,50}$/),
+    label: z.string().min(1).max(300),
+    type: z.enum([
+      "short",
+      "long",
+      "number",
+      "choice",
+      "checkboxes",
+      "select",
+      "date",
+      "file",
+      "yesno",
+      "info",
+    ]),
+    required: z.boolean().default(false),
+    placeholder: z.string().max(200).default(""),
+    help: z.string().max(1000).default(""),
+    options: z.array(z.string().min(1).max(200)).max(30).default([]),
+    maxLength: z.number().int().min(1).max(12000).default(3000),
+    min: z.number().finite().nullable().default(null),
+    max: z.number().finite().nullable().default(null),
+    visibleIf: z
+      .object({ questionId: z.string(), value: z.string().max(200) })
+      .nullable()
+      .default(null),
+  })
+  .strict();
+export const applicationFormSchema = z
+  .object({
+    title: z.string().trim().min(2).max(100),
+    description: z.string().min(5).max(2000),
+    category: z.string().min(1).max(80),
+    published: z.boolean(),
+    open: z.boolean(),
+    reviewRoleIds: z.array(z.string()).max(30),
+    requiredRoleIds: z.array(z.string()).max(30),
+    minAccountDays: z.number().int().min(0).max(3650),
+    cooldownHours: z.number().int().min(0).max(8760),
+    maxActive: z.number().int().min(1).max(10),
+    opensAt: z.iso.datetime().nullable(),
+    closesAt: z.iso.datetime().nullable(),
+    confirmation: z.string().min(1).max(1000),
+    questions: z.array(applicationQuestionSchema).min(1).max(50),
+  })
+  .strict()
+  .superRefine((form, ctx) => {
+    const seen = new Set<string>();
+    for (const [i, q] of form.questions.entries()) {
+      if (seen.has(q.id))
+        ctx.addIssue({
+          code: "custom",
+          message: "Question IDs must be unique",
+          path: ["questions", i, "id"],
+        });
+      if (q.visibleIf && !seen.has(q.visibleIf.questionId))
+        ctx.addIssue({
+          code: "custom",
+          message: "Conditions must refer to an earlier question",
+          path: ["questions", i, "visibleIf"],
+        });
+      if (
+        ["choice", "checkboxes", "select"].includes(q.type) &&
+        q.options.length < 2
+      )
+        ctx.addIssue({
+          code: "custom",
+          message: "Add at least two choices",
+          path: ["questions", i, "options"],
+        });
+      if (q.min !== null && q.max !== null && q.min > q.max)
+        ctx.addIssue({
+          code: "custom",
+          message: "Minimum must not exceed maximum",
+          path: ["questions", i],
+        });
+      if (new Set(q.options).size !== q.options.length)
+        ctx.addIssue({
+          code: "custom",
+          message: "Choice options must be unique",
+          path: ["questions", i, "options"],
+        });
+      seen.add(q.id);
+    }
+    if (form.opensAt && form.closesAt && form.opensAt >= form.closesAt)
+      ctx.addIssue({
+        code: "custom",
+        message: "Closing time must follow opening time",
+      });
+  });
+export type ApplicationQuestion = z.infer<typeof applicationQuestionSchema>;
+export const applicationStatuses = [
+  "DRAFT",
+  "SUBMITTED",
+  "UNDER_REVIEW",
+  "MORE_INFO",
+  "ACCEPTED",
+  "REJECTED",
+  "WITHDRAWN",
+] as const;
+export function questionVisible(
+  question: ApplicationQuestion,
+  answers: Record<string, unknown>,
+) {
+  return (
+    !question.visibleIf ||
+    String(answers[question.visibleIf.questionId] ?? "") ===
+      question.visibleIf.value
+  );
+}
+export function validateApplicationAnswers(
+  questions: ApplicationQuestion[],
+  answers: Record<string, unknown>,
+  submit: boolean,
+) {
+  const allowed = new Set(questions.map((q) => q.id));
+  if (Object.keys(answers).some((id) => !allowed.has(id)))
+    return "Unknown answer field.";
+  for (const q of questions) {
+    if (q.type === "info" || !questionVisible(q, answers)) continue;
+    const v = answers[q.id];
+    const empty =
+      v === undefined ||
+      v === null ||
+      v === "" ||
+      (Array.isArray(v) && v.length === 0);
+    if (empty) {
+      if (submit && q.required) return `${q.label} is required.`;
+      continue;
+    }
+    if (q.type === "yesno") {
+      if (typeof v !== "boolean") return `${q.label} must be yes or no.`;
+    } else if (q.type === "number") {
+      if (
+        typeof v !== "number" ||
+        !Number.isFinite(v) ||
+        (q.min !== null && v < q.min) ||
+        (q.max !== null && v > q.max)
+      )
+        return `${q.label} is outside its number limits.`;
+    } else if (q.type === "checkboxes" || q.type === "file") {
+      if (
+        !Array.isArray(v) ||
+        v.length > 30 ||
+        v.some(
+          (item) =>
+            typeof item !== "string" ||
+            (q.type === "checkboxes" && !q.options.includes(item)),
+        )
+      )
+        return `${q.label} contains an invalid selection.`;
+    } else {
+      if (typeof v !== "string" || v.length > q.maxLength)
+        return `${q.label} exceeds its text limit.`;
+      if (["choice", "select"].includes(q.type) && !q.options.includes(v))
+        return `${q.label} contains an invalid choice.`;
+      if (
+        q.type === "date" &&
+        (!/^\d{4}-\d{2}-\d{2}$/.test(v) ||
+          Number.isNaN(Date.parse(v)) ||
+          new Date(v).toISOString().slice(0, 10) !== v)
+      )
+        return `${q.label} must be a date.`;
+    }
+  }
+  return null;
 }

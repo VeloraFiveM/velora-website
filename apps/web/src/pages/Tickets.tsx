@@ -49,12 +49,13 @@ function TicketWorkspace({
 }) {
   const [params, setParams] = useSearchParams(),
     id = params.get("ticket"),
+    claimed = params.get("claimed") === "me",
     [creating, setCreating] = useState(false),
     [search, setSearch] = useState(""),
     [filter, setFilter] = useState("ALL");
   const list = useQuery({
-    queryKey: ["tickets", staff],
-    queryFn: () => api.tickets(staff),
+    queryKey: ["tickets", staff, claimed],
+    queryFn: () => api.tickets(staff, claimed),
     refetchInterval: 10000,
   });
   const tickets = (list.data ?? []).filter(
@@ -66,7 +67,7 @@ function TicketWorkspace({
   );
   const select = (ticketId: string) => {
     setCreating(false);
-    setParams({ ticket: ticketId });
+    setParams({ ticket: ticketId, ...(claimed ? { claimed: "me" } : {}) });
   };
   return (
     <>
@@ -94,6 +95,24 @@ function TicketWorkspace({
           </button>
         )}
       </div>
+      {staff && (
+        <div className="management-tabs">
+          <button
+            className="button"
+            aria-pressed={!claimed}
+            onClick={() => setParams({})}
+          >
+            All tickets
+          </button>
+          <button
+            className="button"
+            aria-pressed={claimed}
+            onClick={() => setParams({ claimed: "me" })}
+          >
+            Claimed By Me
+          </button>
+        </div>
+      )}
       {creating ? (
         <NewTicketForm
           session={session}
@@ -519,7 +538,8 @@ function Conversation({
                     <p>
                       Delete this ticket from active queues? Its transcript and
                       evidence will remain available to authorised management.
-                      The Discord channel will be archived.
+                      Discord keeps notifications only; the conversation remains
+                      in the website archive.
                     </p>
                     <button
                       className="button"
