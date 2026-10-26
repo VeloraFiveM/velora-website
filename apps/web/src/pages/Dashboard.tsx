@@ -219,8 +219,8 @@ function Overview({ session }: { session: AuthSession }) {
             <dt>Joined</dt>
             <dd>{new Date(session.user.createdAt).toLocaleDateString()}</dd>
           </dl>
-          <Link className="inline-link" to="/announcements">
-            Community news <ArrowUpRight size={16} />
+          <Link className="inline-link" to="/rules">
+            Community rules <ArrowUpRight size={16} />
           </Link>
         </section>
       </div>

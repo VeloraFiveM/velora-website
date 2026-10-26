@@ -43,19 +43,19 @@ function Catalog() {
       <div className="application-catalog-grid">
         {forms.data?.map((form) => (
           <article className="application-opportunity" key={form.id}>
-            <div className="application-card-icon">
-              <FileText size={24} />
+            <div className="application-card-top">
+              <div className="application-card-icon">
+                <FileText size={20} />
+              </div>
+              <span
+                className={`application-status ${form.accepting ? "is-open" : "is-closed"}`}
+              >
+                {form.accepting ? "Open" : "Closed"}
+              </span>
             </div>
             <span className="eyebrow">{form.category}</span>
             <h2>{form.title}</h2>
             <p>{form.description}</p>
-            <span
-              className={`application-status ${form.accepting ? "is-open" : "is-closed"}`}
-            >
-              {form.accepting
-                ? "Accepting applications"
-                : "Applications closed"}
-            </span>
             {form.accepting && (
               <Link
                 className="button primary"

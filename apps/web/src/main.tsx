@@ -24,6 +24,7 @@ import "./redesign.css";
 import "./rules-browser.css";
 import "./ticket-chat.css";
 import "./applications.css";
+import "./ui-system.css";
 const Home = lazy(() => import("./pages/Home"));
 const Content = lazy(() => import("./pages/Content"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -154,7 +155,14 @@ function Layout() {
         </button>
         <nav aria-label="Main navigation" className={menu ? "open" : ""}>
           {navigation.map(([path, label]) => (
-            <NavLink key={path} to={path} end={path === "/"}>
+            <NavLink
+              key={path}
+              to={path}
+              end={path === "/"}
+              className={
+                path === "/dashboard" && portalRoute ? "active" : undefined
+              }
+            >
               {label}
             </NavLink>
           ))}

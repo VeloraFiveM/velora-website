@@ -1,0 +1,302 @@
+/* Shared finish for public pages and all portal workspaces. */
+:root {
+  --ui-surface: #10141f;
+  --ui-raised: #151b27;
+  --ui-input: #0a101a;
+  --ui-border: #ffffff1c;
+  --ui-muted: #aeb6c9;
+  --ui-radius: 12px;
+  --ui-control-radius: 8px;
+  --ui-edge: linear-gradient(120deg, #fe7cce70, #8896b522, #00ffff70);
+}
+.button,
+.applications-ui .button,
+.ticket-conversation .reply-actions .button {
+  border-radius: var(--ui-control-radius);
+  min-height: 44px;
+  padding: 11px 17px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  gap: 9px;
+  max-width: 100%;
+  white-space: normal;
+}
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid #8ce9eb;
+  outline-offset: 4px;
+}
+.page:not(.rules-page) .page-heading h1 {
+  font-size: clamp(2.3rem, 4vw, 4.2rem);
+  line-height: 1.1;
+  margin: 14px 0;
+}
+.page .page-heading > p {
+  font-size: 0.95rem;
+  color: var(--ui-muted);
+  line-height: 1.8;
+}
+.page .page-heading {
+  margin-bottom: 32px;
+}
+.page.applications-catalog {
+  max-width: 1600px;
+  padding: 165px 4% 90px;
+}
+.portal-panel,
+.applications-ui .portal-panel,
+.character-overview,
+.ticket-conversation,
+.ticket-table {
+  background:
+    linear-gradient(var(--ui-surface), var(--ui-surface)) padding-box,
+    var(--ui-edge) border-box;
+  border: 1px solid transparent;
+  border-radius: var(--ui-radius);
+  box-shadow:
+    -4px 0 24px #fe7cce08,
+    4px 0 24px #00ffff08;
+  min-width: 0;
+}
+.portal-panel,
+.applications-ui .portal-panel,
+.character-overview,
+.ticket-conversation {
+  padding: 24px;
+}
+.portal-content > .portal-panel {
+  margin-bottom: 24px;
+}
+.owner-grid,
+.dashboard-lower,
+.permission-grid {
+  gap: 20px;
+}
+.owner-grid .portal-panel {
+  margin: 0;
+}
+.owner-grid a.portal-panel {
+  transition:
+    box-shadow 0.18s,
+    border-color 0.18s;
+}
+.owner-grid a.portal-panel:hover {
+  border-color: #9ae8e54d;
+  box-shadow: 0 0 24px #00ffff12;
+}
+.portal-panel > h2:first-child,
+.owner-grid .portal-panel h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+.portal-panel p,
+.portal-heading p {
+  color: var(--ui-muted);
+}
+.portal-heading {
+  gap: 20px;
+  margin-bottom: 28px;
+}
+.portal-heading h1 {
+  font-size: clamp(1.8rem, 2.65vw, 3rem);
+}
+.portal-sidebar {
+  border-radius: var(--ui-radius);
+  background: var(--ui-surface);
+}
+.portal-sidebar nav a {
+  border-radius: var(--ui-control-radius);
+}
+.portal-sidebar nav a.active {
+  background: linear-gradient(110deg, #fe7cce12, #00ffff09);
+  box-shadow: inset 2px 0 #f1a0d4;
+}
+.portal-content
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    select,
+    textarea
+  ) {
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 0;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-control-radius);
+  background: var(--ui-input);
+  color: #eff2f8;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color-scheme: dark;
+}
+.portal-content :is(input, select, textarea):focus {
+  border-color: #00ffff66;
+}
+.portal-content :is(input[type="checkbox"], input[type="radio"]) {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  accent-color: #8ce9eb;
+}
+.portal-content .check-label {
+  align-items: center;
+}
+.management-tabs {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.management-tabs button {
+  border-radius: var(--ui-control-radius);
+  padding: 11px 14px;
+  min-height: 44px;
+}
+.management-tabs button[aria-selected="true"],
+.management-tabs button[aria-pressed="true"] {
+  background: linear-gradient(110deg, #fe7cce12, #00ffff09);
+}
+.transcript-row,
+.category-management-row,
+.discord-category-row,
+.application-list-row,
+.applications-ui .application-form-card {
+  border-radius: 10px;
+  background: var(--ui-raised);
+  border: 1px solid #ffffff12;
+  padding: 16px;
+  margin-bottom: 10px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.transcript-row:hover,
+.category-management-row:hover {
+  border-color: #00ffff4a;
+}
+.status-badge,
+.application-status {
+  border-radius: 6px;
+  line-height: 1.6;
+}
+.form-actions,
+.portal-action-links,
+.discord-row-actions {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.form-columns > *,
+.portal-heading > div,
+.staff-name-row > *,
+.role-mapping-row > *,
+.discord-category-row > * {
+  min-width: 0;
+}
+.portal-content h1,
+.portal-content h2,
+.portal-content strong {
+  overflow-wrap: anywhere;
+}
+.portal-signin {
+  margin: 24px auto;
+  padding: 40px;
+  width: calc(100% - 40px);
+  min-height: auto;
+  border-radius: var(--ui-radius);
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--ui-surface), var(--ui-surface)) padding-box,
+    var(--ui-edge) border-box;
+}
+.portal-signin h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+}
+.portal-signin p {
+  color: var(--ui-muted);
+  font-size: 0.95rem;
+}
+.application-catalog-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 340px));
+  align-items: start;
+  gap: 20px;
+}
+.application-opportunity {
+  border-radius: var(--ui-radius);
+  background:
+    linear-gradient(var(--ui-surface), var(--ui-surface)) padding-box,
+    var(--ui-edge) border-box;
+  padding: 20px;
+  gap: 10px;
+}
+.application-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 4px;
+}
+.application-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+}
+.application-opportunity h2 {
+  font-size: 1.2rem;
+  line-height: 1.35;
+}
+.application-opportunity .eyebrow {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+}
+.application-opportunity p {
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+.application-opportunity .button {
+  margin-top: 6px;
+  min-width: 0;
+}
+@media (max-width: 800px) {
+  .page.applications-catalog {
+    padding: 125px 20px 60px;
+  }
+  .portal-panel,
+  .applications-ui .portal-panel,
+  .character-overview,
+  .ticket-conversation {
+    padding: 18px;
+  }
+  .portal-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .owner-grid,
+  .dashboard-lower,
+  .permission-grid {
+    gap: 16px;
+  }
+  .portal-signin {
+    padding: 24px;
+  }
+}
+@media (max-width: 550px) {
+  .application-catalog-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .application-opportunity {
+    padding: 18px;
+  }
+  .portal-content
+    :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    font-size: 16px;
+  }
+  .portal-panel dl {
+    display: grid;
+    gap: 6px;
+  }
+  .portal-panel dt {
+    float: none;
+    min-width: 0;
+  }
+  .portal-panel dd {
+    margin: 0 0 10px;
+    overflow-wrap: anywhere;
+  }
+}

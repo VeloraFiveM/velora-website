@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   MessageSquare,
@@ -126,6 +126,14 @@ export function PortalFrame({
     }
   }
   const isStaff = session.isOwner || session.permissions.length > 0;
+  const { pathname } = useLocation();
+  const staffPage = [
+    "/staff",
+    "/staff-tickets",
+    "/staff-applications",
+    "/application-forms",
+    "/admin",
+  ].includes(pathname);
   return (
     <div className="portal-shell">
       <aside className="portal-sidebar">
@@ -164,7 +172,7 @@ export function PortalFrame({
             <MessageSquare size={18} /> My Applications
           </NavLink>
           {isStaff && (
-            <NavLink to="/staff">
+            <NavLink to="/staff" className={staffPage ? "active" : undefined}>
               <Shield size={18} /> Staff
             </NavLink>
           )}
@@ -175,7 +183,10 @@ export function PortalFrame({
             </NavLink>
           )}
           {session.isOwner && (
-            <NavLink to="/owner">
+            <NavLink
+              to="/owner"
+              className={pathname === "/manage-discord" ? "active" : undefined}
+            >
               <Settings size={18} /> Owner
             </NavLink>
           )}
