@@ -17,6 +17,10 @@ export type FormData = {
   opensAt: string | null;
   closesAt: string | null;
   confirmation: string;
+  acceptedMessage: string;
+  deniedMessage: string;
+  notifyStaff: boolean;
+  notificationChannelId: string | null;
   versions: { id: string; version: number; questions: ApplicationQuestion[] }[];
 };
 export type Submission = {

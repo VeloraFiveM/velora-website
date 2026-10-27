@@ -272,6 +272,26 @@ export const applicationFormSchema = z
     opensAt: z.iso.datetime().nullable(),
     closesAt: z.iso.datetime().nullable(),
     confirmation: z.string().min(1).max(1000),
+    acceptedMessage: z
+      .string()
+      .trim()
+      .min(1)
+      .max(3000)
+      .default("Your application has been accepted. Welcome to the team!"),
+    deniedMessage: z
+      .string()
+      .trim()
+      .min(1)
+      .max(3000)
+      .default(
+        "Thank you for applying. Your application has not been accepted this time.",
+      ),
+    notifyStaff: z.boolean().default(true),
+    notificationChannelId: z
+      .string()
+      .regex(/^\d{17,20}$/)
+      .nullable()
+      .default(null),
     questions: z.array(applicationQuestionSchema).min(1).max(50),
   })
   .strict()
