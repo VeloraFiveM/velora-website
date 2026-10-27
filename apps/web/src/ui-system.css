@@ -892,3 +892,20 @@ html.is-home body {
     display: none;
   }
 }
+.home-route .cinematic-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.3dvh, 16px);
+}
+.home-route
+  .cinematic-content
+  :is(h1, p, .eyebrow, .actions, .cinematic-emblem) {
+  margin: 0;
+}
+.is-home header nav.open {
+  max-height: calc(100dvh - 110px);
+  overflow-y: auto;
+}
