@@ -108,3 +108,16 @@ export async function tabletRequest<T>(
     );
   });
 }
+
+if (isTablet)
+  window.addEventListener(
+    "keydown",
+    (event) => {
+      if (event.key === "Escape" || event.key === "F9") {
+        event.preventDefault();
+        event.stopPropagation();
+        window.parent.postMessage({ type: "velora:close" }, parentOrigin);
+      }
+    },
+    true,
+  );
