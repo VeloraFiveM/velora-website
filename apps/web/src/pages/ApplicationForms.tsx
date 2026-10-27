@@ -16,7 +16,7 @@ import type { FormData } from "../application-types";
 type Input = z.infer<typeof applicationFormSchema>;
 const newQuestion = (): ApplicationQuestion => ({
   id: crypto.randomUUID(),
-  label: "New question",
+  label: "",
   type: "long",
   required: true,
   placeholder: "",
@@ -741,7 +741,7 @@ function FormEditor({
                       QUESTION {index + 1} ·{" "}
                       {q.required ? "Required" : "Optional"}
                     </small>
-                    <strong>{q.label || "Untitled question"}</strong>
+                    <strong>{q.label || "New question"}</strong>
                   </span>
                   <span>{expanded === index ? "−" : "+"}</span>
                 </button>
@@ -790,6 +790,7 @@ function FormEditor({
                   <label>
                     Question text
                     <input
+                      placeholder="Type your question"
                       required
                       maxLength={300}
                       value={q.label}
@@ -977,6 +978,37 @@ function FormEditor({
                       </label>
                     )}
                   </details>
+                  <button
+                    type="button"
+                    className="button"
+                    onClick={() => {
+                      if (!q.label.trim()) {
+                        setError(
+                          new Error(
+                            "Enter the question text before continuing.",
+                          ),
+                        );
+                        return;
+                      }
+                      const options = q.options
+                        .map((o) => o.trim())
+                        .filter(Boolean);
+                      if (
+                        ["choice", "checkboxes", "select"].includes(q.type) &&
+                        (options.length < 2 ||
+                          new Set(options).size !== options.length)
+                      ) {
+                        setError(
+                          new Error("Add at least two different choices."),
+                        );
+                        return;
+                      }
+                      setError(undefined);
+                      setExpanded(-1);
+                    }}
+                  >
+                    Done with question
+                  </button>
                 </div>
               </section>
             ))}
