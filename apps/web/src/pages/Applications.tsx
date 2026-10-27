@@ -337,7 +337,8 @@ function ApplicationDetail({
     [reason, setReason] = useState(""),
     [success, setSuccess] = useState(""),
     [uploads, setUploads] = useState<Submission["files"]>([]),
-    [withdraw, setWithdraw] = useState(false);
+    [withdraw, setWithdraw] = useState(false),
+    [deleting, setDeleting] = useState(false);
   const detailRef = useRef<HTMLElement>(null);
   const scrolledToDetail = useRef(false);
   const saving = useRef<Promise<unknown> | null>(null),
@@ -727,6 +728,56 @@ function ApplicationDetail({
             </div>
           </div>
         )}
+      {review && data.canReview && (
+        <div className="ticket-delete-controls">
+          {deleting ? (
+            <div role="alert">
+              <p>
+                Delete this application from the portal and review queues? Its
+                history will be retained.
+              </p>
+              <div className="form-actions">
+                <button
+                  className="button"
+                  disabled={busy}
+                  onClick={async () => {
+                    setBusy(true);
+                    setError(undefined);
+                    try {
+                      await request(
+                        `/v1/staff/applications/${id}`,
+                        "DELETE",
+                        undefined,
+                        session.csrfToken,
+                      );
+                      await client.invalidateQueries({
+                        queryKey: ["applications"],
+                      });
+                      onBack();
+                    } catch (e) {
+                      setError(e);
+                      setBusy(false);
+                    }
+                  }}
+                >
+                  Confirm application deletion
+                </button>
+                <button
+                  className="button"
+                  disabled={busy}
+                  onClick={() => setDeleting(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button className="button" onClick={() => setDeleting(true)}>
+              Delete application
+            </button>
+          )}
+        </div>
+      )}
       <h3 className="application-history-heading">Updates and messages</h3>
       <div className="conversation-messages">
         {data.messages?.map((m) => (

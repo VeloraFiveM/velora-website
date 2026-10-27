@@ -793,3 +793,102 @@
 .applications-ui h3 {
   font-family: inherit;
 }
+/* Home is a single viewport; other routes keep normal document scrolling. */
+html.is-home,
+html.is-home body {
+  height: 100%;
+  overflow: hidden;
+}
+.home-route {
+  height: 100dvh;
+  overflow: hidden;
+}
+.home-route .cinematic-hero {
+  height: 100dvh;
+  min-height: 0;
+}
+.home-route .cinematic-content {
+  max-width: 1450px;
+  padding: 125px 24px 90px;
+}
+.home-route .cinematic-emblem {
+  height: clamp(45px, 10dvh, 100px);
+  margin-bottom: 12px;
+}
+.home-route .cinematic-emblem img {
+  width: clamp(50px, 11dvh, 110px);
+  height: clamp(50px, 11dvh, 110px);
+}
+.home-route .cinematic-content h1 {
+  font-size: clamp(4rem, min(13vw, 21dvh), 14.5rem);
+  margin: 12px 0 0;
+}
+.home-route .hero-description {
+  margin: 18px auto 22px;
+}
+.home-route .cinematic-bottom {
+  bottom: 20px;
+  padding-top: 16px;
+}
+@media (max-width: 800px) {
+  .home-route .cinematic-content {
+    padding: 110px 18px 80px;
+  }
+  .home-route .cinematic-content h1 {
+    font-size: min(17vw, 18dvh);
+  }
+  .home-route .hero-tagline {
+    font-size: clamp(0.8rem, 2.8vw, 1.3rem);
+    letter-spacing: 0.2em;
+  }
+  .home-route .hero-description {
+    max-width: 290px;
+    font-size: 0.82rem;
+  }
+  .home-route .cinematic-content .button {
+    min-width: 0;
+    padding: 12px 15px;
+    font-size: 0.65rem;
+  }
+  .home-route .cinematic-bottom {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .home-route .cinematic-bottom > span {
+    display: none;
+  }
+}
+@media (max-height: 650px) {
+  .home-route .cinematic-emblem {
+    display: none;
+  }
+  .home-route .cinematic-content {
+    padding-top: 105px;
+    padding-bottom: 65px;
+  }
+  .home-route .hero-description {
+    margin: 10px auto 14px;
+  }
+  .home-route .cinematic-bottom {
+    bottom: 10px;
+    padding-top: 8px;
+  }
+}
+@media (max-height: 430px) {
+  .home-route .cinematic-content > .eyebrow,
+  .home-route .hero-description {
+    display: none;
+  }
+  .home-route .cinematic-content h1 {
+    font-size: min(14vw, 19dvh);
+  }
+  .home-route .hero-tagline {
+    font-size: 0.85rem;
+  }
+  .home-route .cinematic-content .actions {
+    margin-top: 12px;
+  }
+  .home-route .cinematic-bottom {
+    display: none;
+  }
+}

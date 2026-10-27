@@ -1,3 +1,4 @@
+import { isTablet } from "../tablet";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -55,9 +56,11 @@ function Overview({ session }: { session: AuthSession }) {
         </Link>
       </div>
       <div className="portal-action-links">
-        <Link className="button" to="/my-applications">
-          My Applications
-        </Link>
+        {!isTablet && (
+          <Link className="button" to="/my-applications">
+            My Applications
+          </Link>
+        )}
         <Link className="button" to="/tickets">
           My Tickets
         </Link>
@@ -66,7 +69,7 @@ function Overview({ session }: { session: AuthSession }) {
             Staff
           </Link>
         )}
-        {session.isOwner && (
+        {!isTablet && session.isOwner && (
           <Link className="button primary" to="/owner">
             Owner
           </Link>

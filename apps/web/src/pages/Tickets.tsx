@@ -1,3 +1,4 @@
+import { isTablet } from "../tablet";
 import TicketMessages from "../TicketMessages";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -328,7 +329,7 @@ function Conversation({
     [error, setError] = useState<unknown>(),
     key = useRef(crypto.randomUUID());
   useEffect(() => {
-    if (!config.apiUrl) return;
+    if (!config.apiUrl || isTablet) return;
     const events = new EventSource(
       `${config.apiUrl}/v1/tickets/${encodeURIComponent(id)}/events`,
       { withCredentials: true },
@@ -457,7 +458,7 @@ function Conversation({
         <button className="text-button" onClick={onBack}>
           <ArrowLeft size={16} /> All conversations
         </button>
-        {ticket && (
+        {ticket && !isTablet && (
           <a
             className="text-button"
             href={`${config.apiUrl}/v1/tickets/${id}/transcript`}
@@ -530,42 +531,40 @@ function Conversation({
               </label>
             </div>
           )}
-          {ticket.canStaff &&
-            (session.isOwner ||
-              session.permissions.includes("tickets.delete")) && (
-              <div className="ticket-delete-controls">
-                {confirmDelete ? (
-                  <div role="alert">
-                    <p>
-                      Delete this ticket from active queues? Its transcript and
-                      evidence will remain available to authorised management.
-                      Discord keeps notifications only; the conversation remains
-                      in the website archive.
-                    </p>
-                    <button
-                      className="button"
-                      disabled={busy}
-                      onClick={() => void remove()}
-                    >
-                      {busy ? "Deleting…" : "Confirm ticket deletion"}
-                    </button>
-                    <button
-                      className="text-button"
-                      onClick={() => setConfirmDelete(false)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                ) : (
+          {ticket.canStaff && (
+            <div className="ticket-delete-controls">
+              {confirmDelete ? (
+                <div role="alert">
+                  <p>
+                    Delete this ticket from active queues? Its transcript and
+                    evidence will remain available to authorised management.
+                    Discord keeps notifications only; the conversation remains
+                    in the website archive.
+                  </p>
+                  <button
+                    className="button"
+                    disabled={busy}
+                    onClick={() => void remove()}
+                  >
+                    {busy ? "Deleting…" : "Confirm ticket deletion"}
+                  </button>
                   <button
                     className="text-button"
-                    onClick={() => setConfirmDelete(true)}
+                    onClick={() => setConfirmDelete(false)}
                   >
-                    Delete ticket and retain transcript
+                    Cancel
                   </button>
-                )}
-              </div>
-            )}
+                </div>
+              ) : (
+                <button
+                  className="text-button"
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  Delete ticket and retain transcript
+                </button>
+              )}
+            </div>
+          )}
           <TicketMessages
             messages={ticket.messages ?? []}
             currentDiscordId={session.user.discordId}
@@ -626,20 +625,22 @@ function Conversation({
                 </div>
               )}
               <div className="reply-actions">
-                <label className="upload-control">
-                  <Paperclip size={17} />
-                  {uploading ? "Uploading…" : "Add evidence"}
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/png,image/jpeg,image/webp,application/pdf"
-                    disabled={uploading || busy}
-                    onChange={(e) => {
-                      void upload(e.target.files);
-                      e.target.value = "";
-                    }}
-                  />
-                </label>
+                {!isTablet && (
+                  <label className="upload-control">
+                    <Paperclip size={17} />
+                    {uploading ? "Uploading…" : "Add evidence"}
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/png,image/jpeg,image/webp,application/pdf"
+                      disabled={uploading || busy}
+                      onChange={(e) => {
+                        void upload(e.target.files);
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                )}
                 {ticket.canStaff &&
                   (session.isOwner ||
                     session.permissions.includes("notes.view")) && (

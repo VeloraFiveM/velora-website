@@ -1,3 +1,4 @@
+import { isTablet } from "./tablet";
 import { useEffect, useId, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -69,26 +70,29 @@ export default function AccountMenu({ session }: { session: AuthSession }) {
             <LayoutDashboard size={16} />
             Player Portal
           </Link>
-          <button
-            disabled={busy}
-            onClick={async () => {
-              setBusy(true);
-              setError("");
-              try {
-                await api.logout(session.csrfToken);
-                client.clear();
-                setOpen(false);
-                navigate("/");
-              } catch {
-                setOpen(true);
-                setError("Sign-out failed. Please try again.");
-                setBusy(false);
-              }
-            }}
-          >
-            <LogOut size={16} />
-            {busy ? "Signing out…" : "Sign out"}
-          </button>
+          {!isTablet && (
+            <button
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                setError("");
+                try {
+                  await api.logout(session.csrfToken);
+                  client.clear();
+                  setOpen(false);
+                  navigate("/");
+                } catch {
+                  setOpen(true);
+                  setError("Sign-out failed. Please try again.");
+                  setBusy(false);
+                }
+              }}
+            >
+              <LogOut size={16} />
+              {busy ? "Signing out…" : "Sign out"}
+            </button>
+          )}
+          {isTablet && <p>Connected through FiveM</p>}
           {error && <p role="alert">{error}</p>}
         </div>
       )}

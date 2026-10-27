@@ -1,3 +1,4 @@
+import { isTablet } from "./tablet";
 import { useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { NavLink, Link, useLocation } from "react-router-dom";
@@ -168,21 +169,24 @@ export function PortalFrame({
           <NavLink to="/tickets">
             <MessageSquare size={18} /> My tickets
           </NavLink>
-          <NavLink to="/my-applications">
-            <MessageSquare size={18} /> My Applications
-          </NavLink>
+          {!isTablet && (
+            <NavLink to="/my-applications">
+              <MessageSquare size={18} /> My Applications
+            </NavLink>
+          )}
           {isStaff && (
             <NavLink to="/staff" className={staffPage ? "active" : undefined}>
               <Shield size={18} /> Staff
             </NavLink>
           )}
-          {(session.isOwner ||
-            session.permissions.includes("transcripts.view")) && (
-            <NavLink to="/transcripts">
-              <MessageSquare size={18} /> Transcripts
-            </NavLink>
-          )}
-          {session.isOwner && (
+          {!isTablet &&
+            (session.isOwner ||
+              session.permissions.includes("transcripts.view")) && (
+              <NavLink to="/transcripts">
+                <MessageSquare size={18} /> Transcripts
+              </NavLink>
+            )}
+          {!isTablet && session.isOwner && (
             <NavLink
               to="/owner"
               className={pathname === "/manage-discord" ? "active" : undefined}
@@ -193,10 +197,13 @@ export function PortalFrame({
         </nav>
         <div className="portal-sidebar-bottom">
           <Link to="/rules">Community rules ↗</Link>
-          <button onClick={() => void logout()} disabled={busy}>
-            <LogOut size={16} />
-            {busy ? "Signing out…" : "Sign out"}
-          </button>
+          {!isTablet && (
+            <button onClick={() => void logout()} disabled={busy}>
+              <LogOut size={16} />
+              {busy ? "Signing out…" : "Sign out"}
+            </button>
+          )}
+          {isTablet && <small>Connected through FiveM · F9 to close</small>}
           {error && <p role="alert">{error}</p>}
         </div>
       </aside>

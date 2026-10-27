@@ -1,3 +1,4 @@
+import { isTablet } from "./tablet";
 import AccountMenu from "./AccountMenu";
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -45,7 +46,7 @@ const logo = `${import.meta.env.BASE_URL}assets/velora-logo.png`;
 const navigation = [
   ["/", "Home"],
   ["/rules", "Rules"],
-  ["/applications", "Applications"],
+  ...(!isTablet ? [["/applications", "Applications"]] : []),
   ["/dashboard", "Portal"],
 ];
 function Splash() {
@@ -107,6 +108,7 @@ function Layout() {
   const location = useLocation();
   const reduced = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
+  const homeRoute = location.pathname === "/";
   const portalRoute =
     /^\/(dashboard|tickets|staff|admin|manage-discord|transcripts|owner|my-applications|staff-tickets|staff-applications|application-forms)(\/|$)/.test(
       location.pathname,
@@ -117,11 +119,13 @@ function Layout() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   useEffect(() => {
+    document.documentElement.classList.toggle("is-home", homeRoute);
     setMenu(false);
     window.scrollTo({ top: 0, behavior: "instant" });
     document.title = `${navigation.find(([path]) => path === location.pathname)?.[1] ?? { "/dashboard": "Portal", "/tickets": "My tickets", "/staff": "Staff", "/staff-tickets": "Staff tickets", "/my-applications": "My Applications", "/staff-applications": "Application review", "/application-forms": "Application forms", "/owner": "Owner", "/admin": "Management", "/manage-discord": "Manage Discord", "/transcripts": "Transcripts" }[location.pathname] ?? "Community"} · Velora`;
     document.getElementById("main")?.focus({ preventScroll: true });
-  }, [location.pathname]);
+    return () => document.documentElement.classList.remove("is-home");
+  }, [location.pathname, homeRoute]);
   return (
     <>
       <a
@@ -183,7 +187,7 @@ function Layout() {
       <main
         id="main"
         tabIndex={-1}
-        className={portalRoute ? "portal-route" : ""}
+        className={homeRoute ? "home-route" : portalRoute ? "portal-route" : ""}
       >
         <AnimatePresence mode="wait">
           <motion.div
@@ -242,7 +246,7 @@ function Layout() {
           </motion.div>
         </AnimatePresence>
       </main>
-      {!portalRoute && (
+      {!portalRoute && !homeRoute && (
         <footer>
           <Link className="footer-brand" to="/">
             VELORA<span> A city. A community. Your story.</span>

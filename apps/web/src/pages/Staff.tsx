@@ -1,3 +1,4 @@
+import { isTablet } from "../tablet";
 import { Link, useSearchParams } from "react-router-dom";
 import { PortalGate } from "../portal";
 import { permissions } from "@velora/shared";
@@ -30,39 +31,43 @@ export default function Staff() {
                 </Link>
               </>
             )}
-            {(session.isOwner ||
-              session.permissions.includes("applications.review")) && (
-              <Link className="portal-panel" to="/staff-applications">
-                <h2>Review applications</h2>
-                <p>Review submissions assigned to your roles.</p>
-              </Link>
-            )}
-            {(session.isOwner ||
-              session.permissions.some((p) =>
-                ["applications.manage", "applications.openclose"].includes(p),
-              )) && (
-              <Link className="portal-panel" to="/application-forms">
-                <h2>Application forms</h2>
-                <p>
-                  Create forms or open and close intake, as your permissions
-                  allow.
-                </p>
-              </Link>
-            )}
-            {(session.isOwner ||
-              session.permissions.includes("transcripts.view")) && (
-              <Link className="portal-panel" to="/transcripts">
-                <h2>Transcripts</h2>
-                <p>Read permitted closed and deleted ticket conversations.</p>
-              </Link>
-            )}
-            {(session.isOwner ||
-              session.permissions.includes("tickets.manage")) && (
-              <Link className="portal-panel" to="/admin">
-                <h2>Ticket categories</h2>
-                <p>Manage category settings and access.</p>
-              </Link>
-            )}
+            {!isTablet &&
+              (session.isOwner ||
+                session.permissions.includes("applications.review")) && (
+                <Link className="portal-panel" to="/staff-applications">
+                  <h2>Review applications</h2>
+                  <p>Review submissions assigned to your roles.</p>
+                </Link>
+              )}
+            {!isTablet &&
+              (session.isOwner ||
+                session.permissions.some((p) =>
+                  ["applications.manage", "applications.openclose"].includes(p),
+                )) && (
+                <Link className="portal-panel" to="/application-forms">
+                  <h2>Application forms</h2>
+                  <p>
+                    Create forms or open and close intake, as your permissions
+                    allow.
+                  </p>
+                </Link>
+              )}
+            {!isTablet &&
+              (session.isOwner ||
+                session.permissions.includes("transcripts.view")) && (
+                <Link className="portal-panel" to="/transcripts">
+                  <h2>Transcripts</h2>
+                  <p>Read permitted closed and deleted ticket conversations.</p>
+                </Link>
+              )}
+            {!isTablet &&
+              (session.isOwner ||
+                session.permissions.includes("tickets.manage")) && (
+                <Link className="portal-panel" to="/admin">
+                  <h2>Ticket categories</h2>
+                  <p>Manage category settings and access.</p>
+                </Link>
+              )}
           </div>
         </>
       )}
