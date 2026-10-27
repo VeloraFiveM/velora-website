@@ -12,6 +12,8 @@ export function tabletOperation(
   const p = new URL(path, "https://portal.invalid");
   const route = p.pathname;
   if (method === "GET") {
+    if (route === "/v1/me/notifications")
+      return { action: "notifications", payload: {} };
     if (route === "/v1/me") return { action: "session", payload: {} };
     if (route === "/v1/me/characters")
       return { action: "characters", payload: {} };
@@ -30,6 +32,8 @@ export function tabletOperation(
         payload: { id: decodeURIComponent(match[1]) },
       };
   }
+  if (method === "POST" && route === "/v1/me/notifications/clear")
+    return { action: "clearNotifications", payload: body };
   if (method === "POST" && route === "/v1/tickets")
     return { action: "createTicket", payload: body };
   const message = route.match(/^\/v1\/tickets\/([^/]+)\/messages$/);
@@ -56,7 +60,6 @@ export async function tabletRequest<T>(
   method: string,
   body: unknown,
 ): Promise<T> {
-  if (method === "GET" && path === "/v1/me/notifications") return [] as T;
   const operation = tabletOperation(path, method, body);
   if (!operation)
     throw new Error(
@@ -86,6 +89,11 @@ export async function tabletRequest<T>(
         reject(new Error(result?.error ?? "The tablet request failed."));
         return;
       }
+      if (op.action === "clearNotifications" && !(body as { id?: string })?.id)
+        window.parent.postMessage(
+          { type: "velora:clearNotices" },
+          parentOrigin,
+        );
       let data = result.data;
       if (op.action === "session")
         data = {

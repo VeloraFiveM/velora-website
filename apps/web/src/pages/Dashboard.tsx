@@ -1,6 +1,6 @@
 import { isTablet } from "../tablet";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -23,15 +23,22 @@ export default function Dashboard() {
   return <PortalGate>{(session) => <Overview session={session} />}</PortalGate>;
 }
 function Overview({ session }: { session: AuthSession }) {
+  const queryClient = useQueryClient();
+  const clear = useMutation({
+    mutationFn: (id?: string) => api.clearNotifications(session.csrfToken, id),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+  });
   const notifications = useQuery({
     queryKey: ["notifications"],
     queryFn: api.notifications,
-    refetchInterval: 15000,
+    refetchInterval: 30000,
   });
   const characters = useQuery({
       queryKey: ["characters"],
       queryFn: api.characters,
-      refetchInterval: 60000,
+      refetchInterval: 300000,
+      staleTime: 300000,
     }),
     tickets = useQuery({
       queryKey: ["tickets", false],
@@ -42,7 +49,7 @@ function Overview({ session }: { session: AuthSession }) {
   const character =
       characters.data?.characters.find((c) => c.id === selected) ??
       characters.data?.characters[0],
-    fresh = character && Date.now() - Date.parse(character.observedAt) < 180000;
+    fresh = character && Date.now() - Date.parse(character.observedAt) < 660000;
   return (
     <>
       <div className="portal-heading">
@@ -76,20 +83,36 @@ function Overview({ session }: { session: AuthSession }) {
         )}
       </div>
       <section className="portal-panel">
-        <h2>Notifications</h2>
+        <div className="panel-heading">
+          <h2>Notifications</h2>
+          <button
+            className="button"
+            disabled={clear.isPending || !notifications.data?.length}
+            onClick={() => clear.mutate(undefined)}
+          >
+            Clear all
+          </button>
+        </div>
+        <ErrorNotice error={clear.error} />
         <ErrorNotice error={notifications.error} />
         {notifications.data?.slice(0, 5).map((n) => (
-          <a
-            className="transcript-row"
-            key={n.id}
-            href={n.href ?? "/#/tickets"}
-          >
-            <div>
-              <strong>{n.title}</strong>
-              <p>{n.body}</p>
-              <small>{new Date(n.createdAt).toLocaleString()}</small>
-            </div>
-          </a>
+          <div className="panel-heading" key={n.id}>
+            <a className="transcript-row" href={n.href ?? "/#/tickets"}>
+              <div>
+                <strong>{n.title}</strong>
+                <p>{n.body}</p>
+                <small>{new Date(n.createdAt).toLocaleString()}</small>
+              </div>
+            </a>
+            <button
+              className="button"
+              aria-label={`Dismiss ${n.title}`}
+              disabled={clear.isPending}
+              onClick={() => clear.mutate(n.id)}
+            >
+              Dismiss
+            </button>
+          </div>
         ))}
         {notifications.data?.length === 0 && <p>No new notifications.</p>}
       </section>

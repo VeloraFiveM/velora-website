@@ -89,6 +89,13 @@ export const api = {
         createdAt: string;
       }[]
     >("/v1/me/notifications"),
+  clearNotifications: (csrf: string, id?: string) =>
+    request(
+      "/v1/me/notifications/clear",
+      "POST",
+      { ...(id ? { id } : {}) },
+      csrf,
+    ),
   characters: () =>
     request<{
       configured: boolean;
