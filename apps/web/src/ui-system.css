@@ -214,7 +214,7 @@
 }
 .application-catalog-grid {
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 340px));
-  align-items: start;
+  align-items: stretch;
   gap: 20px;
 }
 .application-opportunity {
@@ -760,10 +760,12 @@
   color: #feb5e1;
 }
 .application-closed-copy {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
   color: #df9bb8;
   font-size: 0.78rem;
-  margin-top: 16px;
+  margin-top: 6px;
 }
 @media (max-width: 600px) {
   .applications-catalog .application-catalog-grid {
