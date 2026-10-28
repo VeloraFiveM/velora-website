@@ -174,6 +174,13 @@ export function PortalFrame({
               <MessageSquare size={18} /> My Applications
             </NavLink>
           )}
+          {!isTablet &&
+            (session.isOwner ||
+              session.permissions.includes("applications.review")) && (
+              <NavLink to="/staff-applications">
+                <MessageSquare size={18} /> Review applications
+              </NavLink>
+            )}
           {isStaff && (
             <NavLink to="/staff" className={staffPage ? "active" : undefined}>
               <Shield size={18} /> Staff
