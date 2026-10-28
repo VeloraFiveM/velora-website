@@ -264,7 +264,7 @@ function FormEditor({
               form.deniedMessage ??
               "Thank you for applying. Your application has not been accepted this time.",
             notifyStaff: form.notifyStaff ?? true,
-            notificationChannelId: form.notificationChannelId ?? null,
+            notificationChannelId: null,
             questions: form.versions[0]?.questions ?? [newQuestion()],
           }
         : initial(),
@@ -660,19 +660,40 @@ function FormEditor({
               Notify staff when an application is submitted
             </label>
             <label>
-              Staff alert channel ID (optional)
+              Staff alert webhook URL
               <input
-                inputMode="numeric"
-                placeholder="Use the configured applications channel"
-                value={value.notificationChannelId ?? ""}
+                type="password"
+                autoComplete="new-password"
+                placeholder={
+                  form?.notificationWebhookConfigured
+                    ? "Webhook saved — leave blank to keep it"
+                    : "https://discord.com/api/webhooks/…"
+                }
+                value={value.notificationWebhookUrl ?? ""}
                 onChange={(e) =>
-                  patch("notificationChannelId", e.target.value.trim() || null)
+                  patch(
+                    "notificationWebhookUrl",
+                    e.target.value.trim() || undefined,
+                  )
                 }
               />
               <small>
-                Uses the applications alert channel by default. Reviewer roles
-                are pinged; answers stay on the website.
+                Create a webhook in the destination Discord channel and paste
+                its URL here. Each form can use a different server. Saved URLs
+                stay private.
               </small>
+              {form?.notificationWebhookConfigured && (
+                <button
+                  type="button"
+                  className="button"
+                  onClick={() => patch("notificationWebhookUrl", null)}
+                >
+                  Remove saved webhook
+                  {value.notificationWebhookUrl === null
+                    ? " (will remove on save)"
+                    : ""}
+                </button>
+              )}
             </label>
             <h2>Outcome messages</h2>
             <p>

@@ -257,6 +257,14 @@ export const applicationQuestionSchema = z
       .default(null),
   })
   .strict();
+export const discordApplicationWebhookSchema = z
+  .string()
+  .trim()
+  .max(500)
+  .regex(
+    /^https:\/\/discord\.com\/api\/(?:v[0-9]+\/)?webhooks\/[0-9]{17,20}\/[A-Za-z0-9_-]{40,200}$/,
+    "Enter a Discord webhook URL from discord.com.",
+  );
 export const applicationFormSchema = z
   .object({
     title: z.string().trim().min(2).max(100),
@@ -287,6 +295,9 @@ export const applicationFormSchema = z
         "Thank you for applying. Your application has not been accepted this time.",
       ),
     notifyStaff: z.boolean().default(true),
+    notificationWebhookUrl: discordApplicationWebhookSchema
+      .nullable()
+      .optional(),
     notificationChannelId: z
       .string()
       .regex(/^\d{17,20}$/)

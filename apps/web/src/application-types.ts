@@ -21,6 +21,7 @@ export type FormData = {
   deniedMessage: string;
   notifyStaff: boolean;
   notificationChannelId: string | null;
+  notificationWebhookConfigured?: boolean;
   versions: { id: string; version: number; questions: ApplicationQuestion[] }[];
 };
 export type Submission = {
