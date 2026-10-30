@@ -72,17 +72,12 @@ export default function Owner() {
                 [
                   "/manage-discord",
                   "Manage Discord",
-                  "Map Discord roles and manage website ticket categories.",
+                  "Map Discord roles for application access.",
                 ],
                 [
                   "/application-forms",
                   "Application forms",
                   "Build, publish, open or close applications.",
-                ],
-                [
-                  "/transcripts",
-                  "Ticket transcripts",
-                  "Read preserved conversations and evidence.",
                 ],
               ].map(([to, title, text]) => (
                 <Link key={to} className="portal-panel" to={to}>
@@ -204,9 +199,9 @@ function RolePermissions({ session }: { session: AuthSession }) {
   return (
     <>
       <p className="notice">
-        Permissions control actions. Ticket category allowlists and application
-        reviewer roles still control which records a staff member can see. Your
-        protected owner account always retains access.
+        Permissions control actions. Application reviewer roles control which
+        submissions a reviewer can see. Your protected owner account always
+        retains access.
       </p>
       <ErrorNotice error={data.error} />
       {data.data?.roles.map((role) => (
@@ -216,7 +211,9 @@ function RolePermissions({ session }: { session: AuthSession }) {
             .sort()
             .join()}`}
           role={role}
-          available={data.data!.permissions}
+          available={data.data!.permissions.filter(
+            (p) => !/^(tickets\.|notes\.|transcripts\.)/.test(p),
+          )}
           session={session}
         />
       ))}

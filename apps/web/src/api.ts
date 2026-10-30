@@ -1,4 +1,3 @@
-import { isTablet, tabletRequest } from "./tablet";
 import {
   serverStatusSchema,
   announcementsSchema,
@@ -26,8 +25,6 @@ export async function request<T>(
   body?: unknown,
   csrfToken?: string,
 ): Promise<T> {
-  if (isTablet && !path.startsWith("/v1/public/"))
-    return tabletRequest<T>(path, method, body);
   if (!config.apiUrl)
     throw new ApiError(503, "The community service is not configured.");
   const response = await fetch(`${config.apiUrl}${path}`, {

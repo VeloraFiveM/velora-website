@@ -23,20 +23,16 @@ import { config } from "./config";
 import "./styles.css";
 import "./redesign.css";
 import "./rules-browser.css";
-import "./ticket-chat.css";
 import "./applications.css";
 import "./ui-system.css";
 const Home = lazy(() => import("./pages/Home"));
 const Content = lazy(() => import("./pages/Content"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Tickets = lazy(() => import("./pages/Tickets"));
 const Owner = lazy(() => import("./pages/Owner"));
 const ApplicationPages = lazy(() => import("./pages/Applications"));
 const ApplicationForms = lazy(() => import("./pages/ApplicationForms"));
 const Staff = lazy(() => import("./pages/Staff"));
-const Transcripts = lazy(() => import("./pages/Transcripts"));
 const DiscordManagement = lazy(() => import("./pages/DiscordManagement"));
-const Management = lazy(() => import("./pages/Management"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { retry: 1, staleTime: 30000, refetchOnWindowFocus: false },
@@ -211,9 +207,15 @@ function Layout() {
                   path="/support"
                   element={<Navigate to="/dashboard" replace />}
                 />
-                <Route path="/tickets" element={<Tickets />} />
+                <Route
+                  path="/tickets"
+                  element={<Navigate to="/dashboard" replace />}
+                />
                 <Route path="/staff" element={<Staff />} />
-                <Route path="/staff-tickets" element={<Tickets staff />} />
+                <Route
+                  path="/staff-tickets"
+                  element={<Navigate to="/staff" replace />}
+                />
                 <Route path="/owner/:section?" element={<Owner />} />
                 <Route
                   path="/applications"
@@ -236,8 +238,14 @@ function Layout() {
                   path="/announcements"
                   element={<Navigate to="/" replace />}
                 />
-                <Route path="/admin" element={<Management />} />
-                <Route path="/transcripts" element={<Transcripts />} />
+                <Route
+                  path="/admin"
+                  element={<Navigate to="/owner" replace />}
+                />
+                <Route
+                  path="/transcripts"
+                  element={<Navigate to="/dashboard" replace />}
+                />
                 <Route path="/manage-discord" element={<DiscordManagement />} />
                 <Route path="/:page" element={<Content />} />
                 <Route path="*" element={<Content />} />

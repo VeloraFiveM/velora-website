@@ -61,7 +61,7 @@ export function PortalGate({
         <p>
           {unavailable
             ? "The account service is temporarily unavailable. Please try again shortly."
-            : "Sign in with Discord to see your characters, talk to our team, and stay connected to the city."}
+            : "Sign in with Discord to submit applications and follow updates from the team."}
         </p>
         {unavailable ? (
           <button className="button" onClick={() => void session.refetch()}>
@@ -85,7 +85,7 @@ export function PortalGate({
     (anyPermissions
       ? anyPermissions.some((p) => session.data!.permissions.includes(p))
       : session.data.permissions.includes(
-          permission ?? (admin ? "tickets.manage" : "tickets.view"),
+          permission ?? (admin ? "roles.manage" : "applications.review"),
         )) ||
     (admin && session.data.permissions.includes("roles.manage"));
   if ((owner && !session.data.isOwner) || ((staff || admin) && !permitted))
@@ -126,7 +126,9 @@ export function PortalFrame({
       setBusy(false);
     }
   }
-  const isStaff = session.isOwner || session.permissions.length > 0;
+  const isStaff =
+    session.isOwner ||
+    session.permissions.some((p) => p.startsWith("applications."));
   const { pathname } = useLocation();
   const staffPage = [
     "/staff",
@@ -166,9 +168,6 @@ export function PortalFrame({
           <NavLink to="/dashboard">
             <LayoutDashboard size={18} /> Overview
           </NavLink>
-          <NavLink to="/tickets">
-            <MessageSquare size={18} /> My tickets
-          </NavLink>
           {!isTablet && (
             <NavLink to="/my-applications">
               <MessageSquare size={18} /> My Applications
@@ -186,13 +185,6 @@ export function PortalFrame({
               <Shield size={18} /> Staff
             </NavLink>
           )}
-          {!isTablet &&
-            (session.isOwner ||
-              session.permissions.includes("transcripts.view")) && (
-              <NavLink to="/transcripts">
-                <MessageSquare size={18} /> Transcripts
-              </NavLink>
-            )}
           {!isTablet && session.isOwner && (
             <NavLink
               to="/owner"

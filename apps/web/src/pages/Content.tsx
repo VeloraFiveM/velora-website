@@ -1,12 +1,7 @@
 import Rules from "./Rules";
 import { Link, useParams } from "react-router-dom";
-import {
-  ArrowUpRight,
-  ShieldCheck,
-  LifeBuoy,
-  MessageSquare,
-} from "lucide-react";
-import { CommunityActions, News, ServerStatus } from "../components";
+import { ArrowUpRight } from "lucide-react";
+import { CommunityActions, News } from "../components";
 import { config } from "../config";
 function Heading({
   label,
@@ -86,61 +81,13 @@ function Support() {
   return (
     <>
       <Heading
-        label="YOUR PLACE IN VELORA"
-        title="Player Portal."
-        text="Access your characters, tickets and applications in one place."
+        label="APPLICATIONS"
+        title="Your application portal."
+        text="Submit applications and follow updates from our reviewers."
       />
-      <div className="feature-grid">
-        {[
-          {
-            icon: LifeBuoy,
-            title: "General support",
-            text: "Questions about joining the community or finding your way around.",
-          },
-          {
-            icon: ShieldCheck,
-            title: "Reports & appeals",
-            text: "Player reports, appeals, and sensitive concerns handled by authorised staff.",
-          },
-          {
-            icon: MessageSquare,
-            title: "Bugs & feedback",
-            text: "Help improve the city with clear details about an issue or idea.",
-          },
-        ].map(({ icon: Icon, title, text }) => (
-          <article className="card" key={title}>
-            <Icon className="accent" />
-            <h3>{title}</h3>
-            <p>{text}</p>
-          </article>
-        ))}
-      </div>
-      <div className="notice">
-        <LifeBuoy size={22} />
-        <div>
-          <h3>Private support. A clear conversation.</h3>
-          <p>
-            Sign in to open a ticket, send private evidence, and follow the
-            conversation with our team. Your ticket is only visible to you and
-            the staff authorised for its category.
-          </p>
-          <Link className="button primary" to="/tickets">
-            Open your support portal <ArrowUpRight size={16} />
-          </Link>
-          {config.discord ? (
-            <a
-              className="inline-link"
-              href={config.discord}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Visit community Discord <ArrowUpRight size={15} />
-            </a>
-          ) : (
-            <p>The community Discord invite has not been configured.</p>
-          )}
-        </div>
-      </div>
+      <Link className="button primary" to="/dashboard">
+        Open your portal
+      </Link>
     </>
   );
 }
@@ -200,7 +147,6 @@ function Join() {
           </article>
         ))}
       </div>
-      <ServerStatus />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
-import { CommunityActions, ServerStatus } from "../components";
+import { CommunityActions } from "../components";
 export default function Home() {
   return (
     <section className="cinematic-hero">
@@ -28,7 +28,7 @@ export default function Home() {
         <CommunityActions cinematic />
       </div>
       <div className="cinematic-bottom">
-        <ServerStatus />
+        <span>VELORA COMMUNITY</span>
         <Link to="/dashboard" className="scroll-link">
           PLAYER PORTAL <ArrowUpRight size={16} />
         </Link>
