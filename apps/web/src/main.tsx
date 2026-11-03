@@ -1,3 +1,4 @@
+import { recordVisit } from "./visitors";
 import { isTablet } from "./tablet";
 import AccountMenu from "./AccountMenu";
 import React, { lazy, Suspense, useEffect, useState } from "react";
@@ -33,6 +34,7 @@ const ApplicationPages = lazy(() => import("./pages/Applications"));
 const ApplicationForms = lazy(() => import("./pages/ApplicationForms"));
 const Staff = lazy(() => import("./pages/Staff"));
 const DiscordManagement = lazy(() => import("./pages/DiscordManagement"));
+recordVisit();
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { retry: 1, staleTime: 30000, refetchOnWindowFocus: false },

@@ -1,0 +1,120 @@
+.visitors {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+.visitor-toolbar,
+.visitor-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+.visitor-toolbar .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.visitor-stats {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+}
+.visitor-card,
+.visitor-panel {
+  background:
+    linear-gradient(#0e1620, #0e1620) padding-box,
+    linear-gradient(130deg, #ff00a87a, #8b35ff66, #00ffff55) border-box;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  box-shadow: 0 0 18px #8b35ff12;
+}
+.visitor-card {
+  padding: 1rem;
+  display: grid;
+  gap: 0.4rem;
+}
+.visitor-card span,
+.visitor-table th {
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+  color: #d1badf;
+}
+.visitor-card strong {
+  font-size: 2rem;
+  color: #00ffff;
+}
+.visitor-card small,
+.visitor-filters small {
+  color: #bcb4cb;
+}
+.visitor-panel > .visitor-toolbar,
+.visitor-filters,
+.visitor-empty {
+  padding: 1rem;
+}
+.visitor-toolbar h2 {
+  margin: 0;
+}
+.visitor-toolbar input {
+  width: min(100%, 320px);
+}
+.visitor-filters label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.visitor-filters input[type="checkbox"] {
+  width: auto;
+}
+.visitor-table {
+  overflow-x: auto;
+}
+.visitor-table table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.visitor-table th,
+.visitor-table td {
+  padding: 0.75rem;
+  border-top: 1px solid #8b35ff32;
+  white-space: nowrap;
+}
+.visitor-table td:nth-child(6) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 100px;
+}
+.visitors .visitor-danger {
+  color: #ff91d6;
+}
+.visitor-pages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0 1rem 1rem;
+}
+.visitor-pages li {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+.visitor-bar {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ffffff12;
+}
+.visitor-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ff00a8, #8b35ff, #00ffff);
+}

@@ -1,3 +1,4 @@
+import Visitors from "./Visitors";
 import RulesEditor from "./RulesEditor";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -29,13 +30,15 @@ export default function Owner() {
             <div>
               <span className="eyebrow">OWNER CONTROLS</span>
               <h1>
-                {section === "staff"
-                  ? "Manage Staff."
-                  : section === "roles"
-                    ? "Role permissions."
-                    : section === "rules"
-                      ? "Edit Rules."
-                      : "Your owner workspace."}
+                {section === "visitors"
+                  ? "Visitor log."
+                  : section === "staff"
+                    ? "Manage Staff."
+                    : section === "roles"
+                      ? "Role permissions."
+                      : section === "rules"
+                        ? "Edit Rules."
+                        : "Your owner workspace."}
               </h1>
               <p>Owner access remains protected to your Discord account.</p>
             </div>
@@ -45,7 +48,9 @@ export default function Owner() {
               </Link>
             )}
           </div>
-          {section === "rules" ? (
+          {section === "visitors" ? (
+            <Visitors session={session} />
+          ) : section === "rules" ? (
             <RulesEditor session={session} />
           ) : section === "staff" ? (
             <StaffNames session={session} />
@@ -54,6 +59,11 @@ export default function Owner() {
           ) : (
             <div className="owner-grid">
               {[
+                [
+                  "/owner/visitors",
+                  "Visitors",
+                  "View recent site traffic and FiveM join clicks.",
+                ],
                 [
                   "/owner/rules",
                   "Edit Rules",
