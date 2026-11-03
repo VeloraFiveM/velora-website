@@ -24,81 +24,81 @@ export default function Owner() {
   const { section } = useParams();
   return (
     <PortalGate owner>
-      {(session) => (
-        <>
-          <div className="portal-heading">
-            <div>
-              <span className="eyebrow">OWNER CONTROLS</span>
-              <h1>
-                {section === "visitors"
-                  ? "Visitor log."
-                  : section === "staff"
+      {(session) =>
+        section === "visitors" ? (
+          <Visitors session={session} />
+        ) : (
+          <>
+            <div className="portal-heading">
+              <div>
+                <span className="eyebrow">OWNER CONTROLS</span>
+                <h1>
+                  {section === "staff"
                     ? "Manage Staff."
                     : section === "roles"
                       ? "Role permissions."
                       : section === "rules"
                         ? "Edit Rules."
                         : "Your owner workspace."}
-              </h1>
-              <p>Owner access remains protected to your Discord account.</p>
-            </div>
-            {section && (
-              <Link className="button" to="/owner">
-                Owner home
-              </Link>
-            )}
-          </div>
-          {section === "visitors" ? (
-            <Visitors session={session} />
-          ) : section === "rules" ? (
-            <RulesEditor session={session} />
-          ) : section === "staff" ? (
-            <StaffNames session={session} />
-          ) : section === "roles" ? (
-            <RolePermissions session={session} />
-          ) : (
-            <div className="owner-grid">
-              {[
-                [
-                  "/owner/visitors",
-                  "Visitors",
-                  "View recent site traffic and FiveM join clicks.",
-                ],
-                [
-                  "/owner/rules",
-                  "Edit Rules",
-                  "Edit, organise and publish community rules.",
-                ],
-                [
-                  "/owner/staff",
-                  "Manage Staff",
-                  "Set website display names for registered staff.",
-                ],
-                [
-                  "/owner/roles",
-                  "Role permissions",
-                  "Choose exactly what every role can do.",
-                ],
-                [
-                  "/manage-discord",
-                  "Manage Discord",
-                  "Map Discord roles for application access.",
-                ],
-                [
-                  "/application-forms",
-                  "Application forms",
-                  "Build, publish, open or close applications.",
-                ],
-              ].map(([to, title, text]) => (
-                <Link key={to} className="portal-panel" to={to}>
-                  <h2>{title}</h2>
-                  <p>{text}</p>
+                </h1>
+                <p>Owner access remains protected to your Discord account.</p>
+              </div>
+              {section && (
+                <Link className="button" to="/owner">
+                  Owner home
                 </Link>
-              ))}
+              )}
             </div>
-          )}
-        </>
-      )}
+            {section === "rules" ? (
+              <RulesEditor session={session} />
+            ) : section === "staff" ? (
+              <StaffNames session={session} />
+            ) : section === "roles" ? (
+              <RolePermissions session={session} />
+            ) : (
+              <div className="owner-grid">
+                {[
+                  [
+                    "/owner/visitors",
+                    "Visitors",
+                    "View recent site traffic and FiveM join clicks.",
+                  ],
+                  [
+                    "/owner/rules",
+                    "Edit Rules",
+                    "Edit, organise and publish community rules.",
+                  ],
+                  [
+                    "/owner/staff",
+                    "Manage Staff",
+                    "Set website display names for registered staff.",
+                  ],
+                  [
+                    "/owner/roles",
+                    "Role permissions",
+                    "Choose exactly what every role can do.",
+                  ],
+                  [
+                    "/manage-discord",
+                    "Manage Discord",
+                    "Map Discord roles for application access.",
+                  ],
+                  [
+                    "/application-forms",
+                    "Application forms",
+                    "Build, publish, open or close applications.",
+                  ],
+                ].map(([to, title, text]) => (
+                  <Link key={to} className="portal-panel" to={to}>
+                    <h2>{title}</h2>
+                    <p>{text}</p>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </>
+        )
+      }
     </PortalGate>
   );
 }

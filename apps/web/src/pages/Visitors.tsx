@@ -1,14 +1,20 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AuthSession } from "@velora/shared";
-import { request } from "../api";
+import { api, request } from "../api";
 import { ErrorNotice } from "../portal";
 import "./visitors.css";
 
 type Visit = {
   id: string;
-  visitor: string;
-  path: string;
+  ipAddress: string | null;
+  countryCode: string | null;
+  country: string | null;
+  city: string | null;
+  region: string | null;
+  network: string | null;
+  browser: string | null;
+  hosting: boolean;
   referrer: string | null;
   device: string;
   automated: boolean;
@@ -25,6 +31,7 @@ type VisitorLog = {
     joined: number;
   };
   visits: Visit[];
+  countries: { code: string; name: string; count: number }[];
 };
 const dateFormat = new Intl.DateTimeFormat("en-AU", {
   dateStyle: "medium",
@@ -32,14 +39,32 @@ const dateFormat = new Intl.DateTimeFormat("en-AU", {
   timeZone: "Australia/Sydney",
 });
 
+function relativeTime(timestamp: string) {
+  const minutes = Math.max(
+    0,
+    Math.floor((Date.now() - Date.parse(timestamp)) / 60000),
+  );
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
+  return `${Math.floor(minutes / 1440)}d ago`;
+}
+
 export default function Visitors({ session }: { session: AuthSession }) {
   const [search, setSearch] = useState("");
-  const [traffic, setTraffic] = useState("all");
-  const [joined, setJoined] = useState(false);
+  const [traffic, setTraffic] = useState("people");
+  const [region, setRegion] = useState("all");
   const queryClient = useQueryClient();
   const log = useQuery({
     queryKey: ["owner-visitors"],
     queryFn: () => request<VisitorLog>("/v1/owner/visitors"),
+  });
+  const signOut = useMutation({
+    mutationFn: () => api.logout(session.csrfToken),
+    onSuccess: () => {
+      queryClient.clear();
+      window.location.hash = "/";
+    },
   });
   const remove = useMutation({
     mutationFn: (id?: string) =>
@@ -52,26 +77,40 @@ export default function Visitors({ session }: { session: AuthSession }) {
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["owner-visitors"] }),
   });
-  const rows = (log.data?.visits ?? []).filter(
-    (row) =>
-      (traffic === "all" || row.automated === (traffic === "automated")) &&
-      (!joined || row.joinedAt) &&
-      [row.visitor, row.path, row.referrer, row.device].some((value) =>
-        value?.toLowerCase().includes(search.trim().toLowerCase()),
-      ),
-  );
-  const pageCounts = new Map<string, number>();
-  for (const visit of log.data?.visits ?? []) {
-    pageCounts.set(visit.path, (pageCounts.get(visit.path) ?? 0) + 1);
-  }
-  const topPages = [...pageCounts].sort((a, b) => b[1] - a[1]);
+  const query = search.trim().toLowerCase();
+  const englishSpeaking = ["AU", "NZ", "GB", "IE", "US", "CA"];
+  const rows = (log.data?.visits ?? []).filter((row) => {
+    if (traffic === "people" && (row.automated || row.hosting)) return false;
+    if (region === "AU" && row.countryCode !== "AU") return false;
+    if (
+      region === "english" &&
+      !englishSpeaking.includes(row.countryCode ?? "")
+    )
+      return false;
+    return (
+      !query ||
+      [
+        row.ipAddress,
+        row.country,
+        row.city,
+        row.region,
+        row.network,
+        row.referrer,
+        row.device,
+        row.browser,
+      ].some((value) => value?.toLowerCase().includes(query))
+    );
+  });
   const stats = log.data?.stats;
+  const rate = stats?.total
+    ? Math.round((stats.joined * 100) / stats.total)
+    : 0;
   const cards = [
     ["Total visits", stats?.total, "Last 30 days"],
-    ["Unique connections", stats?.unique, "Distinct visitor IDs"],
-    ["Browser visits", stats?.browser, "Excludes detected automation"],
-    ["Today", stats?.today, "Sydney time"],
-    ["Join clicks", stats?.joined, "FiveM link clicks"],
+    ["Unique IPs", stats?.unique, "Distinct addresses"],
+    ["Likely people", stats?.browser, "Excludes detected bots and hosting"],
+    ["Today", stats?.today, "Since midnight Sydney time"],
+    ["Joined", stats?.joined, `${rate}% clicked the FiveM link`],
   ] as const;
   function exportCsv() {
     const csvCell = (value: string) =>
@@ -79,8 +118,11 @@ export default function Visitors({ session }: { session: AuthSession }) {
     const lines = [
       [
         "Time (UTC)",
-        "Visitor ID",
-        "Page",
+        "IP address",
+        "Country",
+        "City",
+        "Region",
+        "Network",
         "Device",
         "Traffic",
         "Join click",
@@ -88,8 +130,11 @@ export default function Visitors({ session }: { session: AuthSession }) {
       ],
       ...rows.map((row) => [
         row.createdAt,
-        row.visitor,
-        row.path,
+        row.ipAddress ?? "",
+        row.country ?? "",
+        row.city ?? "",
+        row.region ?? "",
+        row.network ?? "",
         row.device,
         row.automated ? "Automated" : "Browser",
         row.joinedAt ?? "",
@@ -111,7 +156,10 @@ export default function Visitors({ session }: { session: AuthSession }) {
   return (
     <div className="visitors">
       <div className="visitor-toolbar">
-        <p>playvelora.xyz · Rolling 30-day log</p>
+        <div>
+          <h1>Visitor log</h1>
+          <p>playvelora.xyz</p>
+        </div>
         <div className="actions">
           <button
             className="button"
@@ -137,9 +185,16 @@ export default function Visitors({ session }: { session: AuthSession }) {
           >
             Clear log
           </button>
+          <button
+            className="button"
+            disabled={signOut.isPending}
+            onClick={() => signOut.mutate()}
+          >
+            Sign out
+          </button>
         </div>
       </div>
-      <ErrorNotice error={log.error ?? remove.error} />
+      <ErrorNotice error={log.error ?? remove.error ?? signOut.error} />
       {log.data && !log.data.enabled && (
         <p>Visit collection is awaiting server configuration.</p>
       )}
@@ -157,29 +212,46 @@ export default function Visitors({ session }: { session: AuthSession }) {
           <h2>Recent visits</h2>
           <input
             aria-label="Search visits"
-            placeholder="Search visitor, page, device, referrer…"
+            placeholder="Search IP, country, city, ISP…"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
         </div>
         <div className="visitor-filters">
-          <select
-            aria-label="Traffic filter"
-            value={traffic}
-            onChange={(event) => setTraffic(event.target.value)}
-          >
-            <option value="all">All traffic</option>
-            <option value="browser">Browser visits</option>
-            <option value="automated">Detected automation</option>
-          </select>
-          <label>
-            <input
-              type="checkbox"
-              checked={joined}
-              onChange={(event) => setJoined(event.target.checked)}
-            />{" "}
-            Join clicks only
-          </label>
+          <div className="visitor-filter-group">
+            <span>Traffic</span>
+            <button
+              type="button"
+              aria-pressed={traffic === "people"}
+              onClick={() => setTraffic("people")}
+            >
+              Likely people
+            </button>
+            <button
+              type="button"
+              aria-pressed={traffic === "all"}
+              onClick={() => setTraffic("all")}
+            >
+              Everything
+            </button>
+          </div>
+          <div className="visitor-filter-group">
+            <span>Region</span>
+            {[
+              ["all", "Everywhere"],
+              ["english", "English-speaking"],
+              ["AU", "AU Australia"],
+            ].map(([value, label]) => (
+              <button
+                type="button"
+                key={value}
+                aria-pressed={region === value}
+                onClick={() => setRegion(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
           <small>
             {rows.length} of {log.data?.visits.length ?? 0} recent visits · up
             to 500
@@ -190,10 +262,11 @@ export default function Visitors({ session }: { session: AuthSession }) {
             <thead>
               <tr>
                 <th>Time (Sydney)</th>
-                <th>Visitor ID</th>
-                <th>Page</th>
+                <th>IP address</th>
+                <th>Location</th>
+                <th>Network</th>
                 <th>Device</th>
-                <th>Join click</th>
+                <th>Joined</th>
                 <th>Referrer</th>
                 <th>Action</th>
               </tr>
@@ -201,13 +274,43 @@ export default function Visitors({ session }: { session: AuthSession }) {
             <tbody>
               {rows.map((row) => (
                 <tr key={row.id}>
-                  <td>{dateFormat.format(new Date(row.createdAt))}</td>
                   <td>
-                    <code>{row.visitor}</code>
+                    {dateFormat.format(new Date(row.createdAt))}
+                    <small>{relativeTime(row.createdAt)}</small>
                   </td>
-                  <td>{row.path === "/other" ? "Other page" : row.path}</td>
-                  <td>{row.device}</td>
-                  <td>{row.joinedAt ? "Yes" : "—"}</td>
+                  <td>
+                    <code>{row.ipAddress ?? "—"}</code>
+                  </td>
+                  <td>
+                    <strong>
+                      {[row.countryCode, row.country]
+                        .filter(Boolean)
+                        .join(" ") || "—"}
+                    </strong>
+                    <small>
+                      {[row.city, row.region].filter(Boolean).join(", ")}
+                    </small>
+                  </td>
+                  <td>
+                    <span
+                      className="visitor-network"
+                      title={row.network ?? undefined}
+                    >
+                      {row.network ?? "—"}
+                    </span>
+                  </td>
+                  <td>
+                    {row.device}
+                    <small>{row.browser}</small>
+                  </td>
+                  <td>
+                    <span
+                      className="visitor-joined"
+                      data-joined={Boolean(row.joinedAt)}
+                    >
+                      {row.joinedAt ? "Yes" : "No"}
+                    </span>
+                  </td>
                   <td>{row.referrer ?? "Direct"}</td>
                   <td>
                     <button
@@ -233,33 +336,39 @@ export default function Visitors({ session }: { session: AuthSession }) {
           </p>
         )}
       </section>
-      {topPages.length > 0 && (
-        <section className="visitor-panel">
-          <div className="visitor-toolbar">
-            <h2>Top landing pages</h2>
-            <small>Recent visits</small>
-          </div>
+      <section className="visitor-panel">
+        <div className="visitor-toolbar">
+          <h2>Top countries</h2>
+        </div>
+        {log.data?.countries?.length ? (
           <ul className="visitor-pages">
-            {topPages.map(([page, count]) => (
-              <li key={page}>
+            {log.data.countries.map((country) => (
+              <li key={country.code}>
                 <span>
-                  {page === "/"
-                    ? "Home"
-                    : page === "/other"
-                      ? "Other pages"
-                      : page}
+                  {country.code} · {country.name}
                 </span>
                 <div className="visitor-bar" aria-hidden="true">
                   <span
-                    style={{ width: `${(100 * count) / topPages[0][1]}%` }}
+                    style={{
+                      width: `${(100 * country.count) / log.data!.countries[0].count}%`,
+                    }}
                   />
                 </div>
-                <strong>{count}</strong>
+                <strong>{country.count}</strong>
               </li>
             ))}
           </ul>
-        </section>
-      )}
+        ) : (
+          <p className="visitor-empty">
+            Country totals appear as visits come in.
+          </p>
+        )}
+      </section>
+      <small className="visitor-source">
+        <a href="https://db-ip.com" target="_blank" rel="noreferrer">
+          IP Geolocation by DB-IP
+        </a>
+      </small>
     </div>
   );
 }

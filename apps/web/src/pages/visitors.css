@@ -1,8 +1,10 @@
 .visitors {
   display: grid;
-  gap: 1rem;
+  gap: 0.8rem;
   min-width: 0;
+  font-size: 0.78rem;
 }
+
 .visitor-toolbar,
 .visitor-filters {
   display: flex;
@@ -11,16 +13,20 @@
   gap: 0.75rem;
   justify-content: space-between;
 }
+
 .visitor-toolbar .actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  margin: 0;
 }
+
 .visitor-stats {
   display: grid;
-  gap: 0.75rem;
-  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fit, minmax(116px, 1fr));
 }
+
 .visitor-card,
 .visitor-panel {
   background:
@@ -30,11 +36,13 @@
   border-radius: 14px;
   box-shadow: 0 0 18px #8b35ff12;
 }
+
 .visitor-card {
-  padding: 1rem;
+  padding: 0.65rem 0.75rem;
   display: grid;
-  gap: 0.4rem;
+  gap: 0.2rem;
 }
+
 .visitor-card span,
 .visitor-table th {
   text-transform: uppercase;
@@ -42,79 +50,181 @@
   letter-spacing: 0.07em;
   color: #d1badf;
 }
+
 .visitor-card strong {
-  font-size: 2rem;
+  font-size: 1.45rem;
   color: #00ffff;
+  line-height: 1.25;
 }
+
 .visitor-card small,
 .visitor-filters small {
   color: #bcb4cb;
 }
+
 .visitor-panel > .visitor-toolbar,
 .visitor-filters,
 .visitor-empty {
-  padding: 1rem;
+  padding: 0.65rem 0.75rem;
 }
+
 .visitor-toolbar h2 {
   margin: 0;
 }
+
 .visitor-toolbar input {
   width: min(100%, 320px);
+  font-size: 0.75rem;
+  min-height: 32px;
+  padding: 0.35rem 0.55rem;
 }
-.visitor-filters label {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-.visitor-filters input[type="checkbox"] {
-  width: auto;
-}
+
 .visitor-table {
   overflow-x: auto;
 }
+
 .visitor-table table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
+
 .visitor-table th,
 .visitor-table td {
-  padding: 0.75rem;
+  padding: 0.48rem 0.58rem;
   border-top: 1px solid #8b35ff32;
   white-space: nowrap;
 }
+
 .visitor-table td:nth-child(6) {
-  white-space: normal;
+  white-space: nowrap;
   overflow-wrap: anywhere;
-  min-width: 100px;
+  min-width: 0;
 }
+
 .visitors .visitor-danger {
   color: #ff91d6;
 }
+
 .visitor-pages {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.9rem 1.5rem;
+  gap: 0.5rem 1rem;
   list-style: none;
   margin: 0;
-  padding: 0 1rem 1rem;
+  padding: 0.25rem 0.75rem 0.75rem;
 }
+
 .visitor-pages li {
   display: grid;
-  grid-template-columns: 6.5rem 1fr auto;
+  grid-template-columns: minmax(5rem, auto) 1fr auto;
   align-items: center;
   gap: 0.75rem;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
 }
+
 .visitor-bar {
   height: 6px;
   overflow: hidden;
   border-radius: 999px;
   background: #ffffff12;
 }
+
 .visitor-bar span {
   display: block;
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, #ff00a8, #8b35ff, #00ffff);
+}
+
+.visitors h1 {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.2;
+}
+
+.visitors h2 {
+  font-size: 0.95rem;
+}
+
+.visitors p {
+  margin: 0.25rem 0 0;
+}
+
+.visitors .button {
+  min-height: 32px;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+}
+
+.visitor-card small {
+  font-size: 0.68rem;
+}
+
+.visitor-filter-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.visitor-filter-group > span {
+  color: #bcb4cb;
+  text-transform: uppercase;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  margin-right: 0.2rem;
+}
+
+.visitor-filter-group button {
+  font: inherit;
+  color: #d1badf;
+  border: 1px solid #8b35ff50;
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.visitor-filter-group button[aria-pressed="true"] {
+  color: #00ffff;
+  background: #00ffff12;
+  border-color: #00ffff55;
+}
+
+.visitor-table th {
+  font-size: 0.65rem;
+}
+
+.visitor-table td small {
+  display: block;
+  color: #bcb4cb;
+  font-size: 0.68rem;
+}
+
+.visitor-network {
+  display: block;
+  max-width: 145px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.visitor-joined {
+  border-radius: 999px;
+  background: #ffffff10;
+  padding: 0.12rem 0.35rem;
+}
+
+.visitor-joined[data-joined="true"] {
+  color: #00ffff;
+  background: #00ffff14;
+}
+
+.visitor-table .visitor-danger {
+  min-height: 24px;
+  padding: 0 0.35rem;
+}
+
+.visitor-source {
+  color: #bcb4cb;
 }
