@@ -1,11 +1,15 @@
 import { config } from "./config";
 
 export function recordVisit() {
-  if (window.location.hostname !== "playvelora.xyz" || !config.apiUrl) return;
+  const { hostname, pathname, hash } = window.location;
+  if (
+    hostname !== "playvelora.xyz" ||
+    pathname !== "/" ||
+    (hash !== "" && hash !== "#/") ||
+    !config.apiUrl
+  )
+    return;
   const id = crypto.randomUUID();
-  const path =
-    window.location.hash.slice(1).split("?")[0] || window.location.pathname;
-  const publicPaths = ["/", "/applications", "/rules", "/join", "/dashboard"];
   let referrer = null;
   try {
     const host = new URL(document.referrer).hostname;
@@ -25,7 +29,7 @@ export function recordVisit() {
       .catch(() => false);
   const recorded = post("", {
     id,
-    path: publicPaths.includes(path) ? path : "/other",
+    path: "/",
     referrer,
   });
   document.addEventListener(
