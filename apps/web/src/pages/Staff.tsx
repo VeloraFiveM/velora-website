@@ -1,5 +1,8 @@
+import { ArrowRight, ClipboardCheck, FileCog } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PortalGate } from "../portal";
+import { WorkspaceHeading } from "../workspace";
+
 const applicationPermissions = [
   "applications.review",
   "applications.manage",
@@ -7,39 +10,46 @@ const applicationPermissions = [
   "applications.accept",
   "applications.reject",
 ];
+
 export default function Staff() {
   return (
     <PortalGate staff anyPermissions={applicationPermissions}>
       {(session) => (
         <>
-          <div className="portal-heading">
-            <div>
-              <span className="eyebrow">APPLICATIONS</span>
-              <h1>Your reviewer workspace.</h1>
-              <p>Application tools available through your role permissions.</p>
-            </div>
-          </div>
-          <div className="owner-grid">
+          <WorkspaceHeading
+            title="Staff workspace"
+            description={`Signed in as ${session.user.username}. Manage application intake and review submissions.`}
+          />
+          <section
+            className="portal-panel workspace-tools"
+            aria-labelledby="staff-tools"
+          >
+            <h2 id="staff-tools">Application management</h2>
             {(session.isOwner ||
               session.permissions.includes("applications.review")) && (
-              <Link className="portal-panel" to="/staff-applications">
-                <h2>Review applications</h2>
-                <p>Review submissions assigned to your roles.</p>
+              <Link className="workspace-tool" to="/staff-applications">
+                <ClipboardCheck size={22} aria-hidden />
+                <span>
+                  <strong>Review queue</strong>
+                  <small>Read submissions and record review outcomes.</small>
+                </span>
+                <ArrowRight size={18} aria-hidden />
               </Link>
             )}
             {(session.isOwner ||
               session.permissions.some((p) =>
                 ["applications.manage", "applications.openclose"].includes(p),
               )) && (
-              <Link className="portal-panel" to="/application-forms">
-                <h2>Application forms</h2>
-                <p>
-                  Create forms or open and close intake as your permissions
-                  allow.
-                </p>
+              <Link className="workspace-tool" to="/application-forms">
+                <FileCog size={22} aria-hidden />
+                <span>
+                  <strong>Application forms</strong>
+                  <small>Manage forms and application intake.</small>
+                </span>
+                <ArrowRight size={18} aria-hidden />
               </Link>
             )}
-          </div>
+          </section>
         </>
       )}
     </PortalGate>
