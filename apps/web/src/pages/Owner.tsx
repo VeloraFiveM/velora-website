@@ -1,3 +1,4 @@
+import { ArrowRight, Settings } from "lucide-react";
 import Visitors from "./Visitors";
 import RulesEditor from "./RulesEditor";
 import { useState } from "react";
@@ -56,7 +57,7 @@ export default function Owner() {
             ) : section === "roles" ? (
               <RolePermissions session={session} />
             ) : (
-              <div className="owner-grid">
+              <div className="workspace-owner-grid">
                 {[
                   [
                     "/owner/visitors",
@@ -89,9 +90,13 @@ export default function Owner() {
                     "Build, publish, open or close applications.",
                   ],
                 ].map(([to, title, text]) => (
-                  <Link key={to} className="portal-panel" to={to}>
-                    <h2>{title}</h2>
-                    <p>{text}</p>
+                  <Link key={to} className="workspace-tool" to={to}>
+                    <Settings size={18} aria-hidden />
+                    <span>
+                      <strong>{title}</strong>
+                      <small>{text}</small>
+                    </span>
+                    <ArrowRight size={17} aria-hidden />
                   </Link>
                 ))}
               </div>
