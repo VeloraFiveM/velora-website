@@ -1,43 +1,77 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowUpRight } from "lucide-react";
-import {
-  loadCatalogue,
-  preloadCheckout,
-  resumePurchase,
-  startPurchase,
-  tebexStore,
-  type StorePackage,
-} from "../tebex";
+import { ArrowUpRight, ShoppingBag } from "lucide-react";
+import { loadCatalogue, tebexStore, type StorePackage } from "../tebex";
 import "./store.css";
 
-function PackageDescription({ description }: { description: string }) {
-  const doc = new DOMParser().parseFromString(description, "text/html");
-  const lines = Array.from(doc.body.querySelectorAll("li"), (item) =>
+function PackageDetails({ description }: { description: string }) {
+  const body = new DOMParser().parseFromString(description, "text/html").body;
+  const items = Array.from(body.querySelectorAll("li"), (item) =>
     item.textContent.trim(),
   ).filter(Boolean);
-  if (lines.length) {
+  if (items.length) {
     return (
       <ul>
-        {lines.map((line, index) => (
-          <li key={index}>{line}</li>
+        {items.map((item, index) => (
+          <li key={index}>{item}</li>
         ))}
       </ul>
     );
   }
-  doc.body.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
-  return <p>{doc.body.textContent.trim()}</p>;
+  body.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
+  const text = body.textContent
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return text.map((line, index) => <p key={index}>{line}</p>);
 }
 
-function packagePrice(item: StorePackage) {
+function ProductCard({
+  item,
+  featured,
+}: {
+  item: StorePackage;
+  featured: boolean;
+}) {
   const price = new Intl.NumberFormat("en-AU", {
     style: "currency",
     currency: item.currency,
-    currencyDisplay: "code",
+    currencyDisplay: "narrowSymbol",
   }).format(item.total_price);
-  if (!item.expiry_period) return price;
-  const { count, unit } = item.expiry_period;
-  return count === 1 ? `${price} / ${unit}` : `${price} / ${count} ${unit}s`;
+  const period = item.expiry_period;
+  return (
+    <article
+      className={featured ? "store-package store-featured" : "store-package"}
+    >
+      {item.image && (
+        <div className="store-art">
+          <img src={item.image} alt="" loading="lazy" />
+        </div>
+      )}
+      <div className="store-package-body">
+        <h3>{item.name}</h3>
+        <div className="store-price">
+          <strong>{price}</strong> {item.currency}
+          {period &&
+            (period.count === 1
+              ? ` / ${period.unit}`
+              : ` / ${period.count} ${period.unit}s`)}
+        </div>
+        <details className="store-details" open={Boolean(period)}>
+          <summary>Package details</summary>
+          <PackageDetails description={item.description} />
+        </details>
+        <a
+          className="store-buy"
+          href={`${tebexStore}/package/${encodeURIComponent(item.ident || String(item.id))}`}
+          aria-label={`Buy ${item.name} on Tebex`}
+        >
+          {period ? "View subscription" : "Buy on Tebex"}{" "}
+          <ArrowUpRight size={17} aria-hidden />
+        </a>
+      </div>
+    </article>
+  );
 }
 
 export default function Store() {
@@ -45,136 +79,112 @@ export default function Store() {
     queryKey: ["tebex-catalogue"],
     queryFn: ({ signal }) => loadCatalogue(signal),
   });
-  const resume = useRef<ReturnType<typeof resumePurchase> | null>(null);
-  const [checkout, setCheckout] =
-    useState<Awaited<ReturnType<typeof resumePurchase>>>(null);
-  const [busy, setBusy] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    let active = true;
-    resume.current ??= resumePurchase();
-    void resume.current.then(
-      (result) => {
-        if (!active) return;
-        if (result) preloadCheckout();
-        setCheckout(result);
-        setBusy(false);
-      },
-      () => {
-        if (!active) return;
-        setError("Checkout could not resume. Choose a package to try again.");
-        setBusy(false);
-      },
-    );
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  async function buy(item: StorePackage) {
-    setBusy(true);
-    setError("");
-    try {
-      await startPurchase(item.ident);
-    } catch {
-      setError(
-        "FiveM sign-in could not start. Try again or open the Tebex store.",
-      );
-      setBusy(false);
-    }
-  }
-
-  function openCheckout() {
-    if (!checkout) return;
-    try {
-      if (window.Tebex) {
-        window.Tebex.checkout.init({ ident: checkout.ident, theme: "dark" });
-        window.Tebex.checkout.launch();
-        return;
-      }
-    } catch {
-      // The same basket can be opened on Tebex if its SDK is unavailable.
-    }
-    window.location.assign(checkout.url);
-  }
+  const [selected, setSelected] = useState<number | null>(null);
+  const categories = catalogue.data ?? [];
+  const featured =
+    selected === null
+      ? categories
+          .flatMap(({ packages }) =>
+            packages.filter((item) => item.expiry_period),
+          )
+          .slice(0, 3)
+      : [];
+  const visible =
+    selected === null
+      ? categories
+      : categories.filter(({ id }) => id === selected);
+  const featuredIds = new Set(featured.map(({ ident }) => ident));
 
   return (
     <div className="page velora-store">
       <div className="store-hero">
-        <img
-          src={`${import.meta.env.BASE_URL}assets/velora-logo.png`}
-          alt="Velora"
-        />
+        <img src={`${import.meta.env.BASE_URL}assets/velora-logo.png`} alt="" />
         <div>
           <h1>Velora Store</h1>
-          <p>Browse Velora Coins and monthly supporter packages.</p>
-          <a href={tebexStore}>
-            Open Tebex store <ArrowUpRight size={16} aria-hidden />
-          </a>
+          <p>Velora Coins and monthly supporter packages</p>
         </div>
+        <a className="store-external" href={tebexStore}>
+          Open Tebex store <ArrowUpRight size={16} aria-hidden />
+        </a>
       </div>
-      {error && (
-        <p className="store-status" role="alert">
-          {error}
-        </p>
-      )}
-      {checkout && (
-        <div className="store-status store-checkout">
-          <p>Your package is ready for checkout.</p>
-          <button type="button" className="button" onClick={openCheckout}>
-            Open checkout
+      {categories.length > 0 && (
+        <nav className="store-categories" aria-label="Store categories">
+          <button
+            type="button"
+            aria-pressed={selected === null}
+            onClick={() => setSelected(null)}
+          >
+            All packages
           </button>
-          <a href={checkout.url}>Open on Tebex</a>
-        </div>
+          {categories.map(({ id, name }) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={selected === id}
+              onClick={() => setSelected(id)}
+            >
+              {name}
+            </button>
+          ))}
+        </nav>
       )}
       {catalogue.isPending && (
-        <p className="store-status" role="status">
-          Loading packages…
-        </p>
+        <div role="status" className="store-category">
+          <span className="sr-only">Loading packages</span>
+          <div className="store-grid" aria-hidden="true">
+            {[1, 2, 3].map((item) => (
+              <div className="store-skeleton" key={item} />
+            ))}
+          </div>
+        </div>
       )}
-      {catalogue.isError && (
-        <p className="store-status" role="status">
-          Packages are temporarily unavailable. You can still shop on Tebex.
-        </p>
+      {catalogue.isError && !categories.length && (
+        <div className="store-status" role="status">
+          <ShoppingBag size={24} aria-hidden />
+          <p>Packages are temporarily unavailable.</p>
+          <button
+            type="button"
+            className="button"
+            onClick={() => void catalogue.refetch()}
+          >
+            Try again
+          </button>
+          <a href={tebexStore}>Shop on Tebex</a>
+        </div>
       )}
-      {catalogue.data?.length === 0 && (
-        <p className="store-status">
-          There are no packages available right now.
-        </p>
+      {catalogue.isSuccess && !categories.length && (
+        <p className="store-status">No packages are available right now.</p>
       )}
-      {catalogue.data?.map((category) => (
-        <section
-          className="store-category"
-          key={category.id}
-          aria-labelledby={`store-category-${category.id}`}
-        >
-          <h2 id={`store-category-${category.id}`}>{category.name}</h2>
+      {featured.length > 0 && (
+        <section className="store-category" aria-labelledby="store-featured">
+          <h2 id="store-featured">Featured supporter packages</h2>
           <div className="store-grid">
-            {category.packages.map((item) => (
-              <article className="store-package" key={item.ident}>
-                {item.image && <img src={item.image} alt="" loading="lazy" />}
-                <div className="store-package-body">
-                  <h3>{item.name}</h3>
-                  <PackageDescription description={item.description} />
-                  <div className="store-package-action">
-                    <strong>{packagePrice(item)}</strong>
-                    <button
-                      type="button"
-                      className="button"
-                      disabled={busy}
-                      onClick={() => void buy(item)}
-                      aria-label={`Continue with ${item.name}`}
-                    >
-                      Continue with FiveM
-                    </button>
-                  </div>
-                </div>
-              </article>
+            {featured.map((item) => (
+              <ProductCard item={item} featured key={item.ident} />
             ))}
           </div>
         </section>
-      ))}
+      )}
+      {visible.map((category) => {
+        const packages = category.packages.filter(
+          (item) => !featuredIds.has(item.ident),
+        );
+        if (!packages.length) return null;
+        return (
+          <section
+            className="store-category"
+            key={category.id}
+            aria-labelledby={`store-category-${category.id}`}
+          >
+            <h2 id={`store-category-${category.id}`}>{category.name}</h2>
+            <div className="store-grid">
+              {packages.map((item) => (
+                <ProductCard item={item} featured={false} key={item.ident} />
+              ))}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }
