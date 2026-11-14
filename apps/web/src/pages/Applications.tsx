@@ -1,10 +1,14 @@
-import {
-  ApplicationStatus,
-  WorkspaceHeading,
-  WorkspaceLoading,
-} from "../workspace";
+import "./directory.css";
+import { ApplicationStatus, WorkspaceLoading } from "../workspace";
 import { useUnsavedApplicationChanges } from "../useUnsavedApplicationChanges";
-import { FileText, ArrowUpRight, Inbox } from "lucide-react";
+import {
+  FileText,
+  ArrowUpRight,
+  Inbox,
+  Shield,
+  Users,
+  Building2,
+} from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -33,88 +37,122 @@ function Catalog() {
     queryFn: () => request<FormData[]>("/v1/public/application-forms"),
   });
   const [category, setCategory] = useState("");
+  const entries = forms.data ?? [];
   const categories = [
-    ...new Set(forms.data?.map((form) => form.category).filter(Boolean)),
+    ...new Set(entries.map((form) => form.category).filter(Boolean)),
   ];
+  const activeCategory = categories.includes(category) ? category : "";
+  const visible = entries.filter(
+    (form) => !activeCategory || form.category === activeCategory,
+  );
+
   return (
-    <div className="page applications-ui applications-catalog workspace-catalog">
-      <WorkspaceHeading
-        title="Community applications"
-        description="Browse open opportunities and follow the applications you submit."
-        action={
-          <Link className="button" to="/my-applications">
+    <div className="velora-directory">
+      <div className="directory-hero">
+        <div>
+          <h1>Community applications</h1>
+          <p>
+            Apply for a role in Velora or check the progress of an application
+            you’ve submitted.
+          </p>
+          <Link className="directory-track" to="/my-applications">
             My applications <ArrowUpRight size={16} aria-hidden />
           </Link>
-        }
-      />
+        </div>
+      </div>
       <ErrorNotice error={forms.error} />
       {forms.isPending && <WorkspaceLoading label="Loading applications" />}
-      {categories.length > 1 && (
-        <div className="workspace-category-filter">
-          <label>
-            Category{" "}
-            <select
-              value={category}
-              onChange={(event) => setCategory(event.target.value)}
-            >
-              <option value="">All categories</option>
-              {categories.map((name) => (
-                <option key={name}>{name}</option>
-              ))}
-            </select>
-          </label>
-        </div>
-      )}
-      <div className="application-catalog-grid">
-        {forms.data
-          ?.filter((form) => !category || category === form.category)
-          .map((form) => (
-            <article
-              className={`application-opportunity ${form.accepting ? "is-open" : "is-closed"}`}
-              key={form.id}
-            >
-              <div className="application-card-top">
-                <div className="application-card-icon">
-                  <FileText size={20} />
-                </div>
-                <span
-                  className={`application-status ${form.accepting ? "is-open" : "is-closed"}`}
+      {entries.length > 0 && (
+        <section className="directory-list" aria-labelledby="directory-heading">
+          <div className="directory-toolbar">
+            <h2 id="directory-heading">Application directory</h2>
+            {categories.length > 1 && (
+              <div
+                className="directory-filters"
+                role="group"
+                aria-label="Filter by category"
+              >
+                <button
+                  type="button"
+                  aria-pressed={!activeCategory}
+                  onClick={() => setCategory("")}
                 >
-                  {form.accepting ? "Open" : "Closed"}
-                </span>
+                  All
+                </button>
+                {categories.map((name) => (
+                  <button
+                    type="button"
+                    key={name}
+                    aria-pressed={name === activeCategory}
+                    onClick={() => setCategory(name)}
+                  >
+                    {name}
+                  </button>
+                ))}
               </div>
-              <span className="eyebrow">{form.category}</span>
-              <h2>{form.title}</h2>
-              <p>{form.description}</p>
-              {form.accepting && (
-                <Link
-                  className="application-apply-link"
-                  to={`/my-applications?form=${form.id}`}
-                >
-                  Apply now <ArrowUpRight size={16} />
-                </Link>
-              )}
-              {!form.accepting && (
-                <span className="application-closed-copy">
-                  Not accepting applications
-                </span>
-              )}
-            </article>
-          ))}
-      </div>
-      {forms.data?.length === 0 && (
-        <section className="portal-panel">
-          <Inbox size={30} />
-          <h2>No applications published yet.</h2>
-          <p>
-            Available forms will appear here when community leadership publishes
-            them.
-          </p>
+            )}
+          </div>
+          <div className="directory-grid">
+            {visible.map((form) => {
+              const label = form.category.toLowerCase();
+              const Icon = label.includes("police")
+                ? Shield
+                : label.includes("staff")
+                  ? Users
+                  : label.includes("gang")
+                    ? Building2
+                    : FileText;
+              return (
+                <article className="directory-card" key={form.id}>
+                  <div className="directory-card-top">
+                    <span className="directory-symbol">
+                      <Icon aria-hidden size={23} />
+                    </span>
+                    <span
+                      className="directory-availability"
+                      data-open={Boolean(form.accepting)}
+                    >
+                      {form.accepting ? "Open" : "Closed"}
+                    </span>
+                  </div>
+                  <div className="directory-card-content">
+                    {form.category !== form.title && (
+                      <p className="directory-category">{form.category}</p>
+                    )}
+                    <h3>{form.title}</h3>
+                    {form.description && (
+                      <p className="directory-description">
+                        {form.description.trim().replace(/\n\s*\n/g, "\n")}
+                      </p>
+                    )}
+                  </div>
+                  {form.accepting ? (
+                    <Link
+                      className="directory-apply"
+                      to={`/my-applications?form=${encodeURIComponent(form.id)}`}
+                      aria-label={`Apply for ${form.title}`}
+                    >
+                      Apply now <ArrowUpRight size={17} aria-hidden />
+                    </Link>
+                  ) : (
+                    <p className="directory-closed">Applications are closed</p>
+                  )}
+                </article>
+              );
+            })}
+          </div>
         </section>
+      )}
+      {forms.isSuccess && !entries.length && (
+        <div className="directory-empty">
+          <Inbox size={28} aria-hidden />
+          <h2>No applications published yet</h2>
+        </div>
       )}
     </div>
   );
 }
+
 function Workspace({
   session,
   review,

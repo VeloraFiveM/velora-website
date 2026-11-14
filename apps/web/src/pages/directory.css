@@ -1,0 +1,225 @@
+.velora-directory {
+  width: min(1320px, calc(100% - 64px));
+  margin: 8px auto 64px;
+}
+.directory-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  min-height: 245px;
+  padding: clamp(24px, 5vw, 56px);
+  overflow: hidden;
+  border: 1px solid #b1a7e538;
+  border-radius: 16px;
+  background: #0e1620;
+}
+.directory-hero::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  background:
+    linear-gradient(90deg, #0a0c16 8%, #0a0c16e8 35%, #0a0c1652 72%, #0a0c161c),
+    url("../../public/assets/velora-city-night.webp") center 50% / cover;
+}
+.directory-hero::after {
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  height: 2px;
+  content: "";
+  background: linear-gradient(90deg, #ff00a8, #8b35ff, #00ffff);
+}
+.directory-hero h1 {
+  margin: 0;
+  font-size: clamp(2.15rem, 4.5vw, 4.1rem);
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+.directory-hero p {
+  max-width: 38ch;
+  margin: 14px 0 20px;
+  color: #d3d4e2;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.directory-track,
+.directory-apply {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 750;
+}
+.directory-track {
+  border: 1px solid #ffffff46;
+  background: #14172ae0;
+  color: #fff;
+}
+.directory-track:hover {
+  background: #29213a;
+}
+.directory-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 28px 0 14px;
+}
+.directory-toolbar h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.025em;
+}
+.directory-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.directory-filters button {
+  min-height: 36px;
+  padding: 5px 11px;
+  border: 1px solid #b4afd52b;
+  border-radius: 7px;
+  background: #0e1620;
+  color: #ccd1df;
+  font-size: 0.81rem;
+}
+.directory-filters button[aria-pressed="true"] {
+  border-color: #ff00a879;
+  background: #36132d;
+  color: #ffd8ef;
+}
+.directory-filters button:hover {
+  border-color: #ff8ad2;
+}
+.directory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.directory-card {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #b4afd52b;
+  border-radius: 13px;
+  background:
+    radial-gradient(ellipse at 0 0, #8b35ff19, transparent 65%), #0e1620;
+}
+.directory-card:focus-within,
+.directory-card:hover {
+  border-color: #ff00a875;
+}
+.directory-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.directory-symbol {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid #c574ff55;
+  border-radius: 10px;
+  color: #f2b4ff;
+  background: #8b35ff1e;
+}
+.directory-availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #b9bbca;
+}
+.directory-availability::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  content: "";
+  background: currentColor;
+}
+.directory-availability[data-open="true"] {
+  color: #89f2e7;
+}
+.directory-card-content {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.directory-card-content h3 {
+  margin: 0;
+  font-size: 1.36rem;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+.directory-card-content .directory-category {
+  color: #eab6d9;
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+}
+.directory-description {
+  color: #c3c9d7;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin: 10px 0 0;
+  white-space: pre-line;
+}
+.directory-apply {
+  color: #ffe5f6;
+  border: 1px solid #ff00a85e;
+  background: #ff00a821;
+}
+.directory-apply:hover {
+  background: #ff00a841;
+  color: white;
+}
+.directory-closed {
+  color: #b9bbca;
+  margin: 0;
+  font-size: 0.85rem;
+}
+.directory-empty {
+  padding: 32px 0;
+  color: #c3c9d7;
+}
+.directory-empty h2 {
+  font-size: 1.15rem;
+}
+.velora-directory :is(button, a):focus-visible {
+  outline: 2px solid #00ffff;
+  outline-offset: 3px;
+}
+@media (max-width: 900px) {
+  .directory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 580px) {
+  .velora-directory {
+    width: calc(100% - 28px);
+    margin-top: 0;
+  }
+  .directory-grid {
+    grid-template-columns: 1fr;
+  }
+  .directory-hero {
+    min-height: 0;
+    padding: 24px 18px;
+  }
+  .directory-hero::before {
+    background-position: 70% center;
+  }
+  .directory-filters button {
+    min-height: 42px;
+  }
+}
