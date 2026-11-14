@@ -1,3 +1,8 @@
+import {
+  ApplicationStatus,
+  WorkspaceHeading,
+  WorkspaceLoading,
+} from "../workspace";
 import { useUnsavedApplicationChanges } from "../useUnsavedApplicationChanges";
 import { FileText, ArrowUpRight, Inbox } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -27,59 +32,75 @@ function Catalog() {
     queryKey: ["public-application-forms"],
     queryFn: () => request<FormData[]>("/v1/public/application-forms"),
   });
+  const [category, setCategory] = useState("");
+  const categories = [
+    ...new Set(forms.data?.map((form) => form.category).filter(Boolean)),
+  ];
   return (
-    <div className="page applications-ui applications-catalog">
-      <div className="page-heading">
-        <span className="eyebrow">APPLICATIONS</span>
-        <h1>
-          Join the team.
-          <br />
-          <span className="application-gradient-heading">Get involved.</span>
-        </h1>
-        <p>
-          Find your place in Velora. Check open opportunities and track your
-          applications in the Portal.
-        </p>
-        <Link className="button" to="/my-applications">
-          My Applications
-        </Link>
-      </div>
+    <div className="page applications-ui applications-catalog workspace-catalog">
+      <WorkspaceHeading
+        title="Community applications"
+        description="Browse open opportunities and follow the applications you submit."
+        action={
+          <Link className="button" to="/my-applications">
+            My applications <ArrowUpRight size={16} aria-hidden />
+          </Link>
+        }
+      />
       <ErrorNotice error={forms.error} />
-      {forms.isPending && <p>Loading applications…</p>}
+      {forms.isPending && <WorkspaceLoading label="Loading applications" />}
+      {categories.length > 1 && (
+        <div className="workspace-category-filter">
+          <label>
+            Category{" "}
+            <select
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+            >
+              <option value="">All categories</option>
+              {categories.map((name) => (
+                <option key={name}>{name}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
       <div className="application-catalog-grid">
-        {forms.data?.map((form) => (
-          <article
-            className={`application-opportunity ${form.accepting ? "is-open" : "is-closed"}`}
-            key={form.id}
-          >
-            <div className="application-card-top">
-              <div className="application-card-icon">
-                <FileText size={20} />
+        {forms.data
+          ?.filter((form) => !category || category === form.category)
+          .map((form) => (
+            <article
+              className={`application-opportunity ${form.accepting ? "is-open" : "is-closed"}`}
+              key={form.id}
+            >
+              <div className="application-card-top">
+                <div className="application-card-icon">
+                  <FileText size={20} />
+                </div>
+                <span
+                  className={`application-status ${form.accepting ? "is-open" : "is-closed"}`}
+                >
+                  {form.accepting ? "Open" : "Closed"}
+                </span>
               </div>
-              <span
-                className={`application-status ${form.accepting ? "is-open" : "is-closed"}`}
-              >
-                {form.accepting ? "Open" : "Closed"}
-              </span>
-            </div>
-            <span className="eyebrow">{form.category}</span>
-            <h2>{form.title}</h2>
-            <p>{form.description}</p>
-            {form.accepting && (
-              <Link
-                className="application-apply-link"
-                to={`/my-applications?form=${form.id}`}
-              >
-                Apply now <ArrowUpRight size={16} />
-              </Link>
-            )}
-            {!form.accepting && (
-              <span className="application-closed-copy">
-                Not accepting applications
-              </span>
-            )}
-          </article>
-        ))}
+              <span className="eyebrow">{form.category}</span>
+              <h2>{form.title}</h2>
+              <p>{form.description}</p>
+              {form.accepting && (
+                <Link
+                  className="application-apply-link"
+                  to={`/my-applications?form=${form.id}`}
+                >
+                  Apply now <ArrowUpRight size={16} />
+                </Link>
+              )}
+              {!form.accepting && (
+                <span className="application-closed-copy">
+                  Not accepting applications
+                </span>
+              )}
+            </article>
+          ))}
       </div>
       {forms.data?.length === 0 && (
         <section className="portal-panel">
@@ -130,7 +151,7 @@ function Workspace({
         .includes(search.toLowerCase()),
   );
   return (
-    <div className="applications-ui">
+    <div className="applications-ui workspace-applications">
       <div className="portal-heading">
         <div>
           <span className="eyebrow">
@@ -266,7 +287,7 @@ function Workspace({
               </select>
             </label>
           </div>
-          {list.isPending && <p>Loading applications…</p>}
+          {list.isPending && <WorkspaceLoading label="Loading applications" />}
           {visible.map((a) => (
             <button
               className="application-list-row"
@@ -278,11 +299,18 @@ function Workspace({
                   APP-{String(a.number).padStart(6, "0")}
                 </span>
                 <strong>{a.version?.title ?? a.form.title}</strong>
-                <small>{new Date(a.updatedAt).toLocaleString()}</small>
+                <small>
+                  {review && a.applicant?.username && (
+                    <>{a.applicant.username} · </>
+                  )}
+                  {a.submittedAt ? "Submitted" : "Updated"}{" "}
+                  {new Date(a.submittedAt ?? a.updatedAt).toLocaleDateString(
+                    "en-AU",
+                  )}
+                </small>
               </div>
-              <span className="application-status" data-status={a.status}>
-                {a.status.replaceAll("_", " ")}
-              </span>
+              <ApplicationStatus status={a.status} />
+              <ArrowUpRight size={17} aria-hidden />
             </button>
           ))}
           {!list.isPending && visible.length === 0 && (
@@ -720,14 +748,23 @@ function ApplicationDetail({
                   className="button"
                   key={status}
                   disabled={busy}
-                  onClick={() =>
+                  onClick={() => {
+                    if (
+                      (status === "ACCEPTED" || status === "REJECTED") &&
+                      !window.confirm(
+                        status === "ACCEPTED"
+                          ? "Accept this application and notify the applicant?"
+                          : "Deny this application and notify the applicant?",
+                      )
+                    )
+                      return;
                     void action(`/v1/staff/applications/${id}`, "PATCH", {
                       status,
                       reason,
                     })
                       .then(() => setReason(""))
-                      .catch(() => {})
-                  }
+                      .catch(() => {});
+                  }}
                 >
                   {
                     {
