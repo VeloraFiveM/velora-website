@@ -1,0 +1,351 @@
+:root {
+  --workspace-surface: #0e1620;
+  --workspace-raised: #151d29;
+  --workspace-line: #a2b4d225;
+  --workspace-muted: #aeb7c9;
+  --workspace-radius: 12px;
+  --workspace-gradient: linear-gradient(
+    115deg,
+    #ff00a8aa,
+    #8b35ff66 55%,
+    #00ffff66
+  );
+}
+
+header.store-nav,
+header.portal-header {
+  height: 62px;
+  top: 12px;
+  max-width: 1440px;
+  padding-inline: 20px;
+  border-color: var(--workspace-line);
+  background: #0d111bef;
+  box-shadow: 0 8px 24px #0004;
+}
+header.store-nav .brand img,
+header.portal-header .brand img {
+  width: 34px;
+  height: 34px;
+}
+header.store-nav nav a.active::after,
+header.portal-header nav a.active::after {
+  bottom: 10px;
+}
+header.store-nav :is(.nav-login, .account-link),
+header.portal-header :is(.nav-login, .account-link) {
+  box-shadow: none;
+  padding-block: 0.5rem;
+}
+main.store-route {
+  padding-top: 94px;
+}
+main.portal-route {
+  padding-top: 94px;
+  background:
+    radial-gradient(ellipse at 78% 0, #8b35ff12, transparent 55%), #090b12;
+}
+
+.portal-shell.workspace-shell {
+  grid-template-columns: 218px minmax(0, 1fr);
+  gap: clamp(15px, 3vw, 32px);
+  width: min(100%, 1480px);
+  padding: 0 clamp(14px, 4vw, 42px) 48px;
+  min-height: calc(100svh - 94px);
+}
+.workspace-shell .portal-sidebar {
+  top: 92px;
+  padding: 14px;
+  min-height: min(540px, calc(100svh - 110px));
+  background: var(--workspace-surface);
+  border: 1px solid var(--workspace-line);
+  border-radius: var(--workspace-radius);
+}
+.workspace-shell .portal-wordmark {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0 0.3rem;
+}
+.workspace-shell .portal-wordmark img {
+  width: 37px;
+  height: 37px;
+  object-fit: contain;
+}
+.workspace-shell .portal-wordmark span {
+  font-size: 0.87rem;
+  font-weight: 750;
+  color: #f7eef8;
+  letter-spacing: 0;
+  margin: 0;
+}
+.workspace-shell .portal-person {
+  margin: 0.7rem 0;
+  padding: 0.65rem 0.3rem;
+}
+.workspace-shell .portal-person small {
+  overflow-wrap: anywhere;
+}
+.workspace-shell .portal-sidebar nav {
+  gap: 0.22rem;
+}
+.workspace-shell .portal-sidebar nav a {
+  padding: 0.65rem;
+  gap: 0.65rem;
+  border: 1px solid transparent;
+}
+.workspace-shell .portal-sidebar nav a.active {
+  background: #ff00a814;
+  border-color: #ff00a834;
+}
+.workspace-shell .portal-sidebar-bottom {
+  padding: 1rem 0.35rem 0.25rem;
+  gap: 0.75rem;
+}
+.workspace-shell .portal-content {
+  min-width: 0;
+  width: 100%;
+}
+.workspace-shell .portal-panel {
+  background: var(--workspace-surface);
+  border-color: var(--workspace-line);
+  border-radius: var(--workspace-radius);
+  box-shadow: none;
+}
+.workspace-shell .portal-panel h2 {
+  font-size: 1.12rem;
+  letter-spacing: -0.02em;
+}
+.workspace-shell .portal-heading {
+  margin: 0 0 1.2rem;
+  padding: 0.25rem 0 1.05rem;
+  border-bottom: 1px solid var(--workspace-line);
+}
+.workspace-shell .portal-heading h1 {
+  font-size: clamp(1.7rem, 4vw, 2.45rem);
+}
+.workspace-shell .portal-heading p {
+  color: var(--workspace-muted);
+}
+.workspace-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 0.85rem 0 1.15rem;
+  margin-bottom: 1.15rem;
+  border-bottom: 1px solid var(--workspace-line);
+}
+.workspace-heading h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 4vw, 2.55rem);
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+}
+.workspace-heading p {
+  margin: 0.45rem 0 0;
+  color: var(--workspace-muted);
+  line-height: 1.5;
+}
+.workspace-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+.workspace-overview .portal-panel {
+  margin: 0;
+  padding: 1rem;
+}
+.workspace-overview .panel-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+}
+.workspace-updates {
+  grid-column: 1 / -1;
+}
+.workspace-list-row,
+.workspace-tool {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.6rem;
+  border-top: 1px solid var(--workspace-line);
+  color: #f2edf6;
+}
+.workspace-list-row > :first-child,
+.workspace-tool > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.workspace-list-row small,
+.workspace-tool small {
+  display: block;
+  color: var(--workspace-muted);
+  margin-top: 0.2rem;
+}
+a.workspace-list-row:hover,
+.workspace-tool:hover {
+  background: #8b35ff14;
+  color: white;
+}
+.workspace-tool > svg:first-child {
+  color: #ff8ed2;
+}
+.workspace-tools h2 {
+  margin-bottom: 0.65rem;
+}
+.workspace-status {
+  width: max-content;
+  text-transform: capitalize;
+}
+.workspace-loading {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.7rem 0;
+}
+.workspace-loading > span:not(.sr-only) {
+  display: block;
+  height: 34px;
+  border-radius: 6px;
+  background: var(--workspace-raised);
+}
+.workspace-category-filter {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 0.9rem;
+  color: var(--workspace-muted);
+}
+.workspace-category-filter select {
+  margin-left: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--workspace-surface);
+  color: #f7f2fa;
+  border: 1px solid var(--workspace-line);
+  border-radius: 6px;
+}
+.page.applications-catalog.workspace-catalog {
+  width: min(1160px, calc(100% - 36px));
+  padding-top: 0;
+}
+.workspace-catalog .application-opportunity {
+  background: var(--workspace-surface);
+  border-color: var(--workspace-line);
+  padding: 1.05rem;
+  min-height: 0;
+}
+.workspace-catalog .application-catalog-grid {
+  gap: 0.85rem;
+}
+.workspace-catalog .application-apply-link {
+  margin-top: auto;
+}
+.workspace-applications .application-list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content auto;
+  gap: 0.6rem;
+  align-items: center;
+}
+.workspace-applications .application-list-row > svg {
+  color: #ff90d3;
+}
+.workspace-shell .application-detail .portal-form {
+  max-width: 760px;
+}
+.workspace-shell
+  :is(.portal-form, .application-list-tools)
+  :is(input:not([type="checkbox"]), textarea, select) {
+  background: #0a111b;
+  border-color: var(--workspace-line);
+}
+.workspace-shell
+  :is(.application-question, .builder-section, .question-builder-card) {
+  background: #131b27;
+  border-color: var(--workspace-line);
+}
+.workspace-shell :is(.role-mappings, .permission-grid) {
+  gap: 0.7rem;
+}
+.workspace-shell .workspace-owner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+.workspace-owner-grid .workspace-tool {
+  border: 1px solid var(--workspace-line);
+  border-radius: var(--workspace-radius);
+  background: var(--workspace-surface);
+  padding: 1rem;
+}
+:is(.workspace-shell, .workspace-catalog, .velora-store)
+  :is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 2px solid #00ffff;
+  outline-offset: 3px;
+}
+@media (max-width: 850px) {
+  .portal-shell.workspace-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-shell .portal-sidebar {
+    position: static;
+    min-height: 0;
+    padding: 0.55rem 0.7rem;
+  }
+  .workspace-shell .portal-wordmark {
+    display: none;
+  }
+  .workspace-shell .portal-person {
+    margin: 0;
+    padding: 0.35rem 0;
+  }
+  .workspace-shell .portal-sidebar nav {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    width: 100%;
+    scrollbar-width: thin;
+  }
+  .workspace-shell .portal-sidebar nav a {
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+  .workspace-shell .portal-sidebar-bottom {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 620px) {
+  header.store-nav,
+  header.portal-header {
+    width: calc(100% - 22px);
+    padding-inline: 10px;
+    top: 8px;
+    height: 56px;
+  }
+  header.store-nav nav a.active::after,
+  header.portal-header nav a.active::after {
+    bottom: 3px;
+  }
+  main.store-route,
+  main.portal-route {
+    padding-top: 79px;
+  }
+  .workspace-overview,
+  .workspace-shell .workspace-owner-grid {
+    grid-template-columns: 1fr;
+  }
+  .workspace-updates {
+    grid-column: auto;
+  }
+  .workspace-heading {
+    align-items: flex-start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .store-package {
+    transition: none;
+  }
+}
