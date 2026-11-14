@@ -5,6 +5,8 @@ import { NavLink, Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   MessageSquare,
+  FileText,
+  ClipboardList,
   Shield,
   Settings,
   LogOut,
@@ -130,18 +132,20 @@ export function PortalFrame({
     session.isOwner ||
     session.permissions.some((p) => p.startsWith("applications."));
   const { pathname } = useLocation();
-  const staffPage = [
-    "/staff",
-    "/staff-tickets",
-    "/staff-applications",
-    "/application-forms",
-    "/admin",
-  ].includes(pathname);
+  const canManageForms =
+    session.isOwner ||
+    session.permissions.some((p) =>
+      ["applications.manage", "applications.openclose"].includes(p),
+    );
   return (
-    <div className="portal-shell">
+    <div className="portal-shell workspace-shell">
       <aside className="portal-sidebar">
         <Link className="portal-wordmark" to="/">
-          VELORA<span>COMMUNITY PORTAL</span>
+          <img
+            src={`${import.meta.env.BASE_URL}assets/velora-logo.png`}
+            alt=""
+          />
+          <span>Velora Portal</span>
         </Link>
         <div className="portal-person">
           {session.user.avatar ? (
@@ -165,6 +169,11 @@ export function PortalFrame({
           </div>
         </div>
         <nav aria-label="Portal navigation">
+          {!isTablet && (
+            <NavLink to="/applications">
+              <ClipboardList size={18} /> Browse applications
+            </NavLink>
+          )}
           <NavLink to="/dashboard">
             <LayoutDashboard size={18} /> Overview
           </NavLink>
@@ -181,8 +190,13 @@ export function PortalFrame({
               </NavLink>
             )}
           {isStaff && (
-            <NavLink to="/staff" className={staffPage ? "active" : undefined}>
+            <NavLink to="/staff" end>
               <Shield size={18} /> Staff
+            </NavLink>
+          )}
+          {!isTablet && canManageForms && (
+            <NavLink to="/application-forms">
+              <FileText size={18} /> Application forms
             </NavLink>
           )}
           {!isTablet && session.isOwner && (
