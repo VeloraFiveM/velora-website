@@ -43,6 +43,8 @@ export type Submission = {
     questions: ApplicationQuestion[];
   };
   canReview: boolean;
+  fullReview?: boolean;
+  canAccept?: boolean;
   applicant?: { username: string } | null;
   messages: {
     id: string;

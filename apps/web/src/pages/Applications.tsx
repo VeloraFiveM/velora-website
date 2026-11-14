@@ -536,6 +536,10 @@ function ApplicationDetail({
     ? answerErrors(data.version.questions, answers)
     : {};
   const isReviewer = review && data.canReview && data.status !== "DRAFT";
+  const fullReview = isReviewer && (data.fullReview ?? true);
+  const canAccept =
+    data.canAccept ??
+    (session.isOwner || session.permissions.includes("applications.accept"));
   return (
     <section ref={detailRef} className="portal-panel application-detail">
       <button
@@ -647,29 +651,35 @@ function ApplicationDetail({
         ["SUBMITTED", "UNDER_REVIEW", "MORE_INFO"].includes(data.status) && (
           <div className="application-review-controls">
             <h3>Review actions</h3>
-            <p>
-              {data.reviewerId === session.user.id
-                ? "Claimed by you"
-                : data.reviewerId
-                  ? "Assigned to a reviewer"
-                  : "Unclaimed"}
-            </p>
-            <button
-              className="button"
-              disabled={busy || data.reviewerId === session.user.id}
-              onClick={() =>
-                void action(`/v1/staff/applications/${id}`, "PATCH", {
-                  claim: true,
-                  status: "UNDER_REVIEW",
-                }).catch(() => {})
-              }
-            >
-              {data.reviewerId === session.user.id
-                ? "Claimed by you"
-                : "Claim for review"}
-            </button>
+            {fullReview && (
+              <>
+                <p>
+                  {data.reviewerId === session.user.id
+                    ? "Claimed by you"
+                    : data.reviewerId
+                      ? "Assigned to a reviewer"
+                      : "Unclaimed"}
+                </p>
+                <button
+                  className="button"
+                  disabled={busy || data.reviewerId === session.user.id}
+                  onClick={() =>
+                    void action(`/v1/staff/applications/${id}`, "PATCH", {
+                      claim: true,
+                      status: "UNDER_REVIEW",
+                    }).catch(() => {})
+                  }
+                >
+                  {data.reviewerId === session.user.id
+                    ? "Claimed by you"
+                    : "Claim for review"}
+                </button>
+              </>
+            )}
             <label>
-              Personal note or request for information
+              {fullReview
+                ? "Personal note or request for information"
+                : "Acceptance note"}
               <textarea
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
@@ -677,28 +687,32 @@ function ApplicationDetail({
               />
             </label>
             <details className="application-outcome-preview">
-              <summary>Accepted & denied message presets</summary>
+              <summary>
+                {fullReview
+                  ? "Accepted & denied message presets"
+                  : "Acceptance message preset"}
+              </summary>
               <p>
                 <strong>Accepted:</strong> {data.form.acceptedMessage}
               </p>
-              <p>
-                <strong>Denied:</strong> {data.form.deniedMessage}
-              </p>
+              {fullReview && (
+                <p>
+                  <strong>Denied:</strong> {data.form.deniedMessage}
+                </p>
+              )}
             </details>
             <p>
-              Accept or deny sends the form’s message preset and your personal
-              note to the applicant by Discord DM.
+              {fullReview ? "Accept or deny" : "Accepting"} sends the form’s
+              message preset and your personal note to the applicant by Discord
+              DM.
             </p>
             <div className="form-actions">
               {[
-                "UNDER_REVIEW",
-                "MORE_INFO",
-                ...(session.isOwner ||
-                session.permissions.includes("applications.accept")
-                  ? ["ACCEPTED"]
-                  : []),
-                ...(session.isOwner ||
-                session.permissions.includes("applications.reject")
+                ...(fullReview ? ["UNDER_REVIEW", "MORE_INFO"] : []),
+                ...(canAccept ? ["ACCEPTED"] : []),
+                ...(fullReview &&
+                (session.isOwner ||
+                  session.permissions.includes("applications.reject"))
                   ? ["REJECTED"]
                   : []),
               ].map((status) => (
@@ -728,7 +742,7 @@ function ApplicationDetail({
             </div>
           </div>
         )}
-      {review && data.canReview && (
+      {review && data.canReview && (data.fullReview ?? true) && (
         <div className="ticket-delete-controls">
           {deleting ? (
             <div role="alert">
@@ -794,7 +808,8 @@ function ApplicationDetail({
           </article>
         ))}
       </div>
-      {(isReviewer || data.status === "MORE_INFO") && (
+      {(fullReview ||
+        (data.userId === session.user.id && data.status === "MORE_INFO")) && (
         <form
           className="portal-form"
           onSubmit={async (e) => {
