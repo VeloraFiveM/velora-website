@@ -27,6 +27,7 @@ import "./rules-browser.css";
 import "./applications.css";
 import "./ui-system.css";
 const Home = lazy(() => import("./pages/Home"));
+const Store = lazy(() => import("./pages/Store"));
 const Content = lazy(() => import("./pages/Content"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Owner = lazy(() => import("./pages/Owner"));
@@ -45,6 +46,7 @@ const navigation = [
   ["/", "Home"],
   ["/rules", "Rules"],
   ...(!isTablet ? [["/applications", "Applications"]] : []),
+  ...(!isTablet ? [["/store", "Store"]] : []),
   ["/dashboard", "Portal"],
 ];
 function Splash() {
@@ -204,6 +206,7 @@ function Layout() {
             >
               <Routes location={location}>
                 <Route path="/" element={<Home />} />
+                <Route path="/store" element={<Store />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route
                   path="/support"
