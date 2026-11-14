@@ -26,6 +26,7 @@ import "./redesign.css";
 import "./rules-browser.css";
 import "./applications.css";
 import "./ui-system.css";
+import "./workspace.css";
 const Home = lazy(() => import("./pages/Home"));
 const Store = lazy(() => import("./pages/Store"));
 const Content = lazy(() => import("./pages/Content"));
@@ -109,6 +110,7 @@ function Layout() {
   const reduced = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const homeRoute = location.pathname === "/";
+  const compactPublicRoute = ["/store", "/applications"].includes(location.pathname);
   const portalRoute =
     /^\/(dashboard|tickets|staff|admin|manage-discord|transcripts|owner|my-applications|staff-tickets|staff-applications|application-forms)(\/|$)/.test(
       location.pathname,
@@ -139,9 +141,9 @@ function Layout() {
       >
         Skip to content
       </a>
-      <Splash />
+      {homeRoute && <Splash />}
       <header
-        className={`${scrolled ? "is-scrolled" : ""} ${portalRoute ? "portal-header" : ""}`}
+        className={`${scrolled ? "is-scrolled" : ""} ${portalRoute ? "portal-header" : ""} ${compactPublicRoute ? "store-nav" : ""}`}
       >
         <Link to="/" className="brand" aria-label="Velora home">
           <img src={logo} alt="" />
@@ -187,7 +189,7 @@ function Layout() {
       <main
         id="main"
         tabIndex={-1}
-        className={homeRoute ? "home-route" : portalRoute ? "portal-route" : ""}
+        className={homeRoute ? "home-route" : portalRoute ? "portal-route" : compactPublicRoute ? "store-route" : ""}
       >
         <AnimatePresence mode="wait">
           <motion.div
